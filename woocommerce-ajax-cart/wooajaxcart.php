@@ -1,15 +1,18 @@
 <?php
 /*
-Plugin Name: WooCommerce AJAX Cart
+Plugin Name: Ajax Cart for WooCommerce
 Plugin URI: https://wordpress.org/plugins/woocommerce-ajax-cart/
-Description: Change the default behavior of WooCommerce Cart page, making AJAX requests when quantity field changes
-Version: 1.3.25
+Description: Updates the WooCommerce cart with AJAX as soon as a quantity changes — no "Update cart" click needed
+Version: 1.3.28
 Author: Moises Heberle
-Author URI: https://pluggablesoft.com/contact/
+Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
 Domain Path: /i18n/languages/
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Requires Plugins: woocommerce
 WC requires at least: 3.2
-WC tested up to: 6.7.0
+WC tested up to: 11.2
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -24,7 +27,6 @@ if ( !function_exists('wac_init') ) {
     add_action('wp_enqueue_scripts', 'wac_enqueue_scripts' );
     add_filter('woocommerce_cart_item_quantity', 'wac_filter_woocommerce_cart_item_quantity', 10, 3);
     add_filter('wc_get_template', 'wac_get_template', 10, 5 );
-    add_action('plugins_loaded', 'wac_load_plugin_textdomain');
 
     add_action( 'before_woocommerce_init', function() {
         if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
@@ -35,14 +37,15 @@ if ( !function_exists('wac_init') ) {
     function wac_init() {
         // common lib init
         include_once( 'common/MHCommon.php' );
-        MHCommon::initializeV2(
+        WAC_MHCommon::initializeV2(
             'woocommerce-ajax-cart',
             'wac',
             WAC_BASE_FILE,
-            __('WooCommerce Ajax Cart', 'woocommerce-ajax-cart')
+            __('Ajax Cart for WooCommerce', 'woocommerce-ajax-cart')
         );
 
         // plugin checks
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only marks the shopper's own AJAX cart refresh as a cart request; changes no data
         if ( !empty($_POST['is_wac_ajax']) && !defined( 'WOOCOMMERCE_CART' ) ) {
             define( 'WOOCOMMERCE_CART', true );
         }
@@ -98,14 +101,6 @@ if ( !function_exists('wac_init') ) {
         return apply_filters('mh_wac_setting_value', $name);
     }
     
-    function wac_load_plugin_textdomain() {
-        load_plugin_textdomain(
-            'woocommerce-ajax-cart',
-            FALSE,
-            dirname( plugin_basename( __FILE__ ) ) . '/i18n/languages'
-        );
-    }
-
     function wac_enqueue_scripts() {
         // check if WooCommerce was enabled
         if ( !class_exists('WooCommerce') ) {
@@ -118,8 +113,10 @@ if ( !function_exists('wac_init') ) {
             $deps[] = 'wc-cart';
         }
 
-        wp_enqueue_style('wooajaxcart', plugins_url('assets/wooajaxcart.css', plugin_basename(WAC_BASE_FILE)));
-        wp_enqueue_script('wooajaxcart', plugins_url('assets/wooajaxcart.js', plugin_basename(WAC_BASE_FILE)), $deps);
+        // Versioned by the file's own date, so a new release never meets a cached copy.
+        $dir = plugin_dir_path(WAC_BASE_FILE);
+        wp_enqueue_style('wooajaxcart', plugins_url('assets/wooajaxcart.css', plugin_basename(WAC_BASE_FILE)), array(), (string) filemtime($dir . 'assets/wooajaxcart.css'));
+        wp_enqueue_script('wooajaxcart', plugins_url('assets/wooajaxcart.js', plugin_basename(WAC_BASE_FILE)), $deps, (string) filemtime($dir . 'assets/wooajaxcart.js'), false);
     
         $frontendData = wac_frontend_vars();
         wp_localize_script( 'wooajaxcart', 'wooajaxcart', $frontendData );

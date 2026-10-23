@@ -1,8 +1,10 @@
 <?php
-if ( !class_exists('MHNotice') ) {
-    class MHNotice {
+defined('ABSPATH') || exit;
+
+if ( !class_exists('WAC_MHNotice') ) {
+    class WAC_MHNotice {
         /**
-         * @var MHCommon
+         * @var WAC_MHCommon
          */
         private $common;
 
@@ -18,9 +20,17 @@ if ( !class_exists('MHNotice') ) {
 
             add_action('admin_notices', array($this, 'checkNotices'));
 
-            if ( !empty($_GET['MHCommonDismiss']) && !empty($_GET['alias']) && ( $_GET['MHCommonDismiss'] == $pluginAlias ) ) {
-                $this->dismissNotice( sanitize_text_field($_GET['alias']) );
-                wp_safe_redirect( esc_url_raw( admin_url('plugins.php') ) );
+            if ( !empty($_GET['MHCommonDismiss']) && !empty($_GET['alias']) && ( sanitize_text_field(wp_unslash($_GET['MHCommonDismiss'])) === $pluginAlias ) ) {
+                $alias = sanitize_text_field(wp_unslash($_GET['alias']));
+
+                if ( current_user_can('manage_options')
+                     && isset($_GET['_wpnonce'])
+                     && wp_verify_nonce( sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'wac_dismiss_' . $pluginAlias . '_' . $alias ) ) {
+
+                    $this->dismissNotice( $alias );
+                    wp_safe_redirect( esc_url_raw( admin_url('plugins.php') ) );
+                    exit;
+                }
             }
         }
 
@@ -53,40 +63,44 @@ if ( !class_exists('MHNotice') ) {
                 }
 
                 // ignore undesired notices
-                if ( $isPremium && ( $alias == MHCommon::PREMIUM_ADV_NOTICE ) ) {
+                if ( $isPremium && ( $alias == WAC_MHCommon::PREMIUM_ADV_NOTICE ) ) {
                     continue;
                 }
 
-                if ( !$isPremium && ( $alias == MHCommon::LICENSE_CODE_EMPTY_NOTICE ) ) {
+                if ( !$isPremium && ( $alias == WAC_MHCommon::LICENSE_CODE_EMPTY_NOTICE ) ) {
                     continue;
                 }
 
                 $dismissUrl = admin_url('plugins.php?MHCommonDismiss=' . $pluginAlias . '&alias=' . $alias);
+                $dismissUrl = wp_nonce_url( $dismissUrl, 'wac_dismiss_' . $pluginAlias . '_' . $alias );
+
                 if ( $dismissDays > 0 ) {
-                    $dismissLink = sprintf('<a href="%s">Dismiss for %d days</a>', $dismissUrl, $dismissDays);
+                    $dismissLink = sprintf('<a href="%s">%s</a>', esc_url($dismissUrl), sprintf(
+                        /* translators: %d: number of days */
+                        esc_html__('Dismiss for %d days', 'woocommerce-ajax-cart'), (int) $dismissDays ));
                 }
                 else if ( $dismissDays == 0 ) {
-                    $dismissLink = sprintf('<a href="%s">Dismiss this notice</a>', $dismissUrl);
+                    $dismissLink = sprintf('<a href="%s">%s</a>', esc_url($dismissUrl), esc_html__('Dismiss this notice', 'woocommerce-ajax-cart'));
                 }
                 else {
                     $dismissLink = '';
                 }
-                
-                $pluginTitle = esc_html__($this->common->getPluginTitle());
-                $type = !empty($notice['type']) ? esc_html__($notice['type']) : '';
+
+                $pluginTitle = $this->common->getPluginTitle();
+                $type = !empty($notice['type']) ? $notice['type'] : '';
                 $message = !empty($notice['message']) ? $notice['message'] : '';
 
                 if ( empty($message) ) {
                     continue;
                 }
 
-                echo '<div class="notice notice-'.$type.'">
-                        <strong>'.$pluginTitle.'</strong>
+                echo '<div class="notice notice-'.esc_attr($type).'">
+                        <strong>'.esc_html($pluginTitle).'</strong>
                         <p>
-                            '.$message.'
+                            '.wp_kses_post($message).'
                         </p>
                         <p style="text-align: right; margin-top: -10px;">
-                            '.$dismissLink.'
+                            '.wp_kses_post($dismissLink).'
                         </p>
                     </div>';
             }

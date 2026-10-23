@@ -1,12 +1,15 @@
 <?php
-if ( !class_exists('MHSettings') ) {
-    class MHSettings {
+defined('ABSPATH') || exit;
+
+if ( !class_exists('WAC_MHSettings') ) {
+    class WAC_MHSettings {
         private $pluginAlias;
         private $pluginTitle;
         private $pluginAbbrev;
+        private $pluginBaseFile;
 
         /**
-         * @var MHCommon
+         * @var WAC_MHCommon
          */
         private $common;
 
@@ -44,10 +47,10 @@ if ( !class_exists('MHSettings') ) {
             $action_links = array();
 
             if ( $this->display_premium_tab() ) {
-                $action_links['get_pro'] = sprintf('<a href="%s" style="color: #46b450; font-weight: bold;">%s</a>', $this->tab_url('tab-buy.php'), esc_html__('Go Pro', 'woocommerce'));
+                $action_links['get_pro'] = sprintf('<a href="%s" style="color: #46b450; font-weight: bold;">%s</a>', esc_url($this->tab_url('tab-buy.php')), esc_html__('Go Pro', 'woocommerce-ajax-cart'));
             }
 
-            $action_links['settings'] = sprintf('<a href="%s">%s</a>', $this->admin_url(), esc_html__('Settings', 'woocommerce'));
+            $action_links['settings'] = sprintf('<a href="%s">%s</a>', esc_url($this->admin_url()), esc_html__('Settings', 'woocommerce-ajax-cart'));
     
             return array_merge( $action_links, $links );
         }
@@ -57,8 +60,10 @@ if ( !class_exists('MHSettings') ) {
     
             // treat boolean values
             foreach ( $this->default_settings() as $name => $val ) {
+                // phpcs:disable WordPress.Security.NonceVerification.Missing -- settings_page() checked the nonce (check_admin_referer) before calling this
                 if ( isset($opts[$name]) && isset($_POST[$name]) && in_array($val, array('yes', 'no'))) {
                     $opts[$name] = ( !empty($_POST[$name]) ? 'yes' : 'no' );
+                // phpcs:enable
                 }
             }
 
@@ -70,16 +75,17 @@ if ( !class_exists('MHSettings') ) {
             $defaultSettings = $this->default_settings();
             $allOptions = $this->all_options();
     
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only reached from settings_save(), after settings_page() checked the nonce
             foreach ( $_POST as $key => $val ) {
                 if ( in_array($key, array_keys($defaultSettings)) ) {
                     if ( is_numeric($defaultSettings[$key]) ) {
-                        $allOptions[$key] = (int) sanitize_text_field($val);
+                        $allOptions[$key] = (int) sanitize_text_field(wp_unslash($val));
                     }
                     else if ( is_array($val) ) {
-                        $allOptions[$key] = $val;
+                        $allOptions[$key] = array_map('sanitize_text_field', wp_unslash($val));
                     }
                     else {
-                        $allOptions[$key] = sanitize_text_field($val);
+                        $allOptions[$key] = sanitize_text_field(wp_unslash($val));
                     }
                 }
             }
@@ -108,8 +114,10 @@ if ( !class_exists('MHSettings') ) {
         }
     
         public function admin_url() {
+            // phpcs:disable WordPress.Security.NonceVerification.Recommended -- reads which admin page is open, to build links; changes nothing
             if ( !empty($_REQUEST['page']) ) {
-                $page = sanitize_text_field($_REQUEST['page']);
+                $page = sanitize_text_field(wp_unslash($_REQUEST['page']));
+                // phpcs:enable
             }
             
             else {
@@ -133,13 +141,14 @@ if ( !class_exists('MHSettings') ) {
     
         public function setting_tab($tab, $label) {
             $class = ($tab == $this->active_tab()) ? 'nav-tab-active' : '';
-            $tab = '<a href="'. $this->tab_url($tab) . '" class="nav-tab '.$class.'">'.$label.'</a>';
+            $tab = '<a href="'. esc_url($this->tab_url($tab)) . '" class="nav-tab '.esc_attr($class).'">'.wp_kses_post($label).'</a>';
     
             return $tab;
         }
     
         public function active_tab() {
-            $tab = basename(sanitize_file_name( isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : null ));
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reads which settings tab is open; changes nothing
+            $tab = basename(sanitize_file_name( isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : '' ));
     
             if ( preg_match('/^tab-(.*)$/', $tab) ) {
                 return $tab;
@@ -149,7 +158,7 @@ if ( !class_exists('MHSettings') ) {
         }
         
         public function admin_tab() {
-            return esc_html__(str_replace('.php', '', $this->active_tab()));
+            return esc_html(str_replace('.php', '', $this->active_tab()));
         }
 
         public function normalize_tabname($tab) {
@@ -166,14 +175,14 @@ if ( !class_exists('MHSettings') ) {
             }
     
             // Save settings if data has been posted
-            if ( ! empty( $_POST ) && check_admin_referer('mh_nonce') ) {
-                $btnClick = sanitize_text_field($_POST['save']);
+            if ( ! empty( $_POST ) && check_admin_referer('wac_settings_nonce') ) {
+                $btnClick = isset($_POST['save']) ? sanitize_text_field(wp_unslash($_POST['save'])) : '';
 
                 switch( $btnClick ) {
-                    case esc_html__( 'Save settings' ):
+                    case esc_html__('Save settings', 'woocommerce-ajax-cart'):
                         $this->settings_save();
                     break;
-                    case esc_html__( 'Reset all settings' ):
+                    case esc_html__('Reset all settings', 'woocommerce-ajax-cart'):
                         update_option($this->pluginAbbrev . '_settings', $this->default_settings());
                     break;
                     default:
@@ -184,7 +193,7 @@ if ( !class_exists('MHSettings') ) {
             
             $this->enqueue_admin_scripts();
 
-            $title = esc_html__($this->common->getPluginTitle());
+            $title = $this->common->getPluginTitle();
             $displayPremiumTab = $this->display_premium_tab();
 
             ?>
@@ -193,20 +202,20 @@ if ( !class_exists('MHSettings') ) {
                 <br />
                 </div>
                 <h2 class="nav-tab-wrapper">
-                    <?php echo $title; ?>
+                    <?php echo esc_html($title); ?>
                 </h2>
                 <?php if ( $displayPremiumTab ): ?>
                     <?php $this->premium_alert_box(); ?>
                 <?php endif; ?>
                 <nav class="nav-tab-wrapper woo-nav-tab-wrapper">
                     <?php foreach ( $this->build_tabs() as $name => $label ): ?>
-                        <?php echo $this->setting_tab($name, $label) ?>
+                        <?php echo wp_kses_post($this->setting_tab($name, $label)); ?>
                     <?php endforeach; ?>
                     <?php if ( $displayPremiumTab ): ?>
-                        <?php echo $this->setting_tab(
+                        <?php echo wp_kses_post($this->setting_tab(
                             'tab-buy.php',
-                            '<span style="color: #46b450;">' . esc_html__('Get PRO') . '</span>'
-                        ); ?>
+                            '<span style="color: #46b450;">' . esc_html__('Get PRO', 'woocommerce-ajax-cart') . '</span>'
+                        )); ?>
                     <?php endif; ?>
                 </nav>
                 <div class="mh-settings-page">
@@ -346,27 +355,35 @@ if ( !class_exists('MHSettings') ) {
         }
         
         public function enqueue_admin_scripts() {
-            wp_enqueue_style( $this->pluginAbbrev . '_admin_style', plugins_url('common/assets/admin-settings.css', $this->pluginBaseFile));
-            wp_enqueue_script( $this->pluginAbbrev . '_admin_script', plugins_url('common/assets/admin-settings.js', $this->pluginBaseFile));
-    
-            wp_localize_script( $this->pluginAbbrev . '_admin_script', 'tab_current', array($this->admin_tab()));
+            $scriptHandle = $this->pluginAbbrev . '_admin_script';
+
+            $cssPath = plugin_dir_path($this->pluginBaseFile) . 'common/assets/admin-settings.css';
+            $jsPath = plugin_dir_path($this->pluginBaseFile) . 'common/assets/admin-settings.js';
+
+            $cssVer = file_exists($cssPath) ? filemtime($cssPath) : false;
+            $jsVer = file_exists($jsPath) ? filemtime($jsPath) : false;
+
+            wp_enqueue_style( $this->pluginAbbrev . '_admin_style', plugins_url('common/assets/admin-settings.css', $this->pluginBaseFile), array(), $cssVer );
+            wp_enqueue_script( $scriptHandle, plugins_url('common/assets/admin-settings.js', $this->pluginBaseFile), array('jquery'), $jsVer, true );
+
+            wp_localize_script( $scriptHandle, 'wac_tab_current', array($this->admin_tab()));
         }
         
         public function form_header() {
             ?>
             <form method="post" id="mainform" action="" enctype="multipart/form-data">
-                <?php wp_nonce_field('mh_nonce'); ?>
+                <?php wp_nonce_field('wac_settings_nonce'); ?>
             <?php
         }
         
         public function form_footer() {
             ?>
                 <hr/>
-                <input name="save" class="button-primary" type="submit" value="<?php echo esc_html__( 'Save settings' ); ?>" />
+                <input name="save" class="button-primary" type="submit" value="<?php echo esc_html__('Save settings', 'woocommerce-ajax-cart'); ?>" />
                 <?php do_action("mh_{$this->pluginAbbrev}_admin_buttons"); ?>
                 <input name="save" class="button" type="submit"
-                        value="<?php echo esc_html__( 'Reset all settings' ); ?>"
-                        onclick="return confirm('<?php echo esc_html__('Are you sure?') ?>')"/>
+                        value="<?php echo esc_html__('Reset all settings', 'woocommerce-ajax-cart'); ?>"
+                        onclick="return confirm('<?php echo esc_html__('Are you sure?', 'woocommerce-ajax-cart') ?>')"/>
             </form>
             <?php
         }
@@ -374,7 +391,9 @@ if ( !class_exists('MHSettings') ) {
         private function get_rate_recommendation() {
             $pluginUrl = 'https://wordpress.org/support/plugin/' . $this->pluginAlias . '/reviews/#new-post';
 
-            $text = sprintf(__('If you liked this plugin, please help us <a href="%s" target="_blank">giving a 5-star rate</a> on WordPress.org :)'), $pluginUrl);
+            $text = sprintf(
+                /* translators: %s: the plugin's review page */
+                __('If you liked this plugin, please help us <a href="%s" target="_blank">giving a 5-star rate</a> on WordPress.org :)', 'woocommerce-ajax-cart'), $pluginUrl);
 
             $text = wp_kses($text, array(
                 'a' => array('href' => array(), 'target' => array())
@@ -393,7 +412,8 @@ if ( !class_exists('MHSettings') ) {
 
         public function get_premium_notice() {
             $text = sprintf(
-                __("You're using a limited version of %s. For more features and better support, please <a href='%s'>consider the premium version</a>."),
+                /* translators: 1: the plugin's name, 2: the premium tab's address */
+                __('You\'re using a limited version of %1$s. For more features and better support, please <a href="%2$s">consider the premium version</a>.', 'woocommerce-ajax-cart'),
                 $this->pluginTitle,
                 $this->tab_premium_url()
             );
@@ -412,8 +432,8 @@ if ( !class_exists('MHSettings') ) {
                 ?>
                 <div class="mh-update-message notice inline notice-warning notice-alt">
                     <p>
-                        <img src="<?php echo $imgAlert; ?>"/>
-                        <?php echo $this->get_premium_notice(); ?>
+                        <img src="<?php echo esc_url($imgAlert); ?>"/>
+                        <?php echo wp_kses_post($this->get_premium_notice()); ?>
                     </p>
                 </div>
                 <?php
@@ -446,13 +466,13 @@ if ( !class_exists('MHSettings') ) {
             ?>
             <?php foreach ( $features as $feature ): ?>
                 <li>
-                    <?php echo $this->format_feature_name($feature); ?>
+                    <?php echo esc_html($this->format_feature_name($feature)); ?>
                     <?php $urlDemo = $this->get_feature_youtube_demo($feature);
                           if ( !empty($urlDemo)): ?>
                             &nbsp;
-                            <a href="<?php echo $urlDemo; ?>" title="View demonstration video" class="mh-feature-video" target="_blank">
+                            <a href="<?php echo esc_url($urlDemo); ?>" title="View demonstration video" class="mh-feature-video" target="_blank">
                                 View demo
-                                <img src="<?php echo $imgYT; ?>"/>
+                                <img src="<?php echo esc_url($imgYT); ?>"/>
                             </a>
                     <?php endif; ?>
                 </li>
@@ -490,17 +510,17 @@ if ( !class_exists('MHSettings') ) {
             ?>
             <div class="mh-buy-div">
                 <h1>
-                    <?php echo esc_html__($this->pluginTitle) . ' PRO'; ?>
+                    <?php echo esc_html($this->pluginTitle . ' PRO'); ?>
                 </h1>
                 <h3>
-                    <?php echo esc_html__('Features included in PRO version') ?>:
+                    <?php echo esc_html__('Features included in PRO version', 'woocommerce-ajax-cart') ?>:
                 </h3>
                 <ul class="mh-premium-features">
                     <?php $this->render_premium_features(); ?>
                 </ul>
                 <h1>
-                    <a href="<?php echo $this->get_premium_url(); ?>" target="_blank" style="">
-                        <?php echo esc_html__('Buy on Gumroad') ?> &rarr;
+                    <a href="<?php echo esc_url($this->get_premium_url()); ?>" target="_blank" style="">
+                        <?php echo esc_html__('Buy on Gumroad', 'woocommerce-ajax-cart') ?> &rarr;
                     </a>
                 </h1>
             </div>
@@ -511,13 +531,13 @@ if ( !class_exists('MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <input type="hidden" name="<?php echo $name ?>" value="0" />
+            <input type="hidden" name="<?php echo esc_attr($name) ?>" value="0" />
             <label>
                 <input type="checkbox"
                        <?php if ( $value === 'yes' ): ?>checked<?php endif; ?>
-                       class="<?php echo $class ?>"
-                       name="<?php echo $name ?>">
-                <?php echo esc_html__($label); ?>
+                       class="<?php echo esc_attr($class) ?>"
+                       name="<?php echo esc_attr($name) ?>">
+                <?php echo esc_html($label); ?>
             </label>
             <?php
         }
@@ -526,11 +546,11 @@ if ( !class_exists('MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html__($label); ?>:
+            <?php echo esc_html($label); ?>:
             <input type="text"
-                    value="<?php echo $value; ?>"
-                    size="<?php echo $size; ?>"
-                    name="<?php echo $name; ?>">
+                    value="<?php echo esc_attr($value); ?>"
+                    size="<?php echo esc_attr($size); ?>"
+                    name="<?php echo esc_attr($name); ?>">
             <?php
         }
         
@@ -538,12 +558,12 @@ if ( !class_exists('MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html__($label); ?>:
+            <?php echo esc_html($label); ?>:
             <input type="number"
-                    value="<?php echo $value; ?>"
-                    name="<?php echo $name; ?>"
-                    min="<?php echo $min; ?>"
-                    max="<?php echo $max; ?>">
+                    value="<?php echo esc_attr($value); ?>"
+                    name="<?php echo esc_attr($name); ?>"
+                    min="<?php echo esc_attr($min); ?>"
+                    max="<?php echo esc_attr($max); ?>">
             <?php
         }
         
@@ -551,10 +571,10 @@ if ( !class_exists('MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html__($label); ?>:
+            <?php echo esc_html($label); ?>:
             <input type="color"
-                    value="<?php echo $value; ?>"
-                    name="<?php echo $name; ?>">
+                    value="<?php echo esc_attr($value); ?>"
+                    name="<?php echo esc_attr($name); ?>">
             <?php
         }
 
@@ -562,10 +582,10 @@ if ( !class_exists('MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html__($label); ?>:
+            <?php echo esc_html($label); ?>:
             <input type="date"
-                    value="<?php echo $value; ?>"
-                    name="<?php echo $name; ?>">
+                    value="<?php echo esc_attr($value); ?>"
+                    name="<?php echo esc_attr($name); ?>">
             <?php
         }
 
@@ -573,11 +593,11 @@ if ( !class_exists('MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html__($label); ?>:
-            <select name="<?php echo $name ?>">
+            <?php echo esc_html($label); ?>:
+            <select name="<?php echo esc_attr($name) ?>">
                 <?php foreach ( (array) $options as $optVal => $optLabel ): ?>
                     <option <?php if ( $value == $optVal ): ?>selected<?php endif; ?>
-                            value="<?php echo $optVal ?>"><?php echo $optLabel; ?></option>
+                            value="<?php echo esc_attr($optVal) ?>"><?php echo esc_html($optLabel); ?></option>
                 <?php endforeach; ?>
             </select>
             <?php
@@ -589,15 +609,14 @@ if ( !class_exists('MHSettings') ) {
             
             ?>
             <br/>
-            <?php echo esc_html__($label); ?>:
+            <?php echo esc_html($label); ?>:
             <br/>
-            <input type="hidden" name="<?php echo $name; ?>" value=""/>
-            <select multiple="multiple" name="<?php echo $name; ?>[]">
+            <input type="hidden" name="<?php echo esc_attr($name); ?>" value=""/>
+            <select multiple="multiple" name="<?php echo esc_attr($name); ?>[]">
                 <?php
-                foreach ($options as $key => $label ) { ?>
-                <?php $selected = in_array( $key, $values ) ? ' selected="selected" ' : ''; ?>
-                    <option value="<?php echo $key; ?>" <?php echo $selected; ?> >
-                        <?php echo $label; ?>
+                foreach ($options as $key => $optLabel ) { ?>
+                    <option value="<?php echo esc_attr($key); ?>" <?php selected( in_array( $key, $values ) ); ?> >
+                        <?php echo esc_html($optLabel); ?>
                     </option>
                 <?php } //endforeach ?>
             </select>
@@ -608,7 +627,7 @@ if ( !class_exists('MHSettings') ) {
             $values = (array) $this->get_option($name, array());
 
             ?>
-            <?php echo esc_html__( $label ); ?>: &nbsp;
+            <?php echo esc_html( $label ); ?>: &nbsp;
             <?php foreach ( $options as $key => $value ): ?>
                 <label><input
                             name="<?php echo esc_attr($name); ?>[]"

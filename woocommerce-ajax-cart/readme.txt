@@ -1,15 +1,17 @@
-=== WooCommerce Ajax Cart Plugin ===
+=== Ajax Cart for WooCommerce ===
 Contributors: moiseh
 Tags: woocommerce, ajax, cart, shipping
 Requires at least: 5.0
-Tested up to: 6.0.1
-Stable tag: 1.3.25
+Tested up to: 7.1
+Stable tag: 1.3.28
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Updates the WooCommerce cart totals with AJAX as soon as a quantity changes, without clicking "Update cart".
 
 == Description ==
 
-WooCommerce AJAX Cart is a WordPress Plugin that changes the default behavior of WooCommerte Cart Page, allowing a buyer to see the Total price calculation when change the Quantity of a product, without need to manually click on "Update cart" button.
+Ajax Cart for WooCommerce changes the default behavior of the WooCommerce cart page: when a buyer changes the quantity of a product, the totals are recalculated right away with AJAX, without clicking the "Update cart" button.
 
 This improves the user experience when purchasing a product. No other hacks/code/theme changes is needed, this functionality is added when the plugin is activated.
 
@@ -32,7 +34,7 @@ Premium version features:
 * Option to lock quantity inputs to allow only change using plus and minus buttons
 * Update price vs quantity calculation automatically on Single Product pages
 
-If you looking for a related plugin with more complete features maybe you can try [WooCommerce Better Usability](https://wordpress.org/plugins/woo-better-usability) plugin.
+If you looking for a related plugin with more complete features maybe you can try [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability) plugin.
 
 == Installation ==
 
@@ -42,9 +44,21 @@ If you looking for a related plugin with more complete features maybe you can tr
 
 == Screenshots ==
 
-1. When user clicks on "+" or "-" of Quantity field, an AJAX request was made to update the prices.
+1. The cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart".
 
 == Changelog ==
+
+= 1.3.28 =
+* Changed: the settings page's script variable, nonces and notice links now carry the plugin's own prefix; "Tested up to" is declared only in readme.txt
+
+= 1.3.27 =
+* Renamed to "Ajax Cart for WooCommerce" and given a new icon, following the WordPress.org trademark guidelines (the plugin's address and settings are unchanged)
+* The plugin header now declares its license and that it requires WooCommerce
+* Fixed: with another of our plugins on the same site, the two no longer share — and override — each other's settings, notices and update code
+
+= 1.3.26 =
+* Tested with WordPress 7.1 and WooCommerce 11.2 (on PHP 8.4)
+* Security hardening: the settings page escapes every value it prints and unslashes what it saves, and dismissing an admin notice now requires a valid nonce
 
 = 1.3.25 =
 * Added `High-Performance order storage` compatibility

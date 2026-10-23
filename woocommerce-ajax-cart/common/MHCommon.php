@@ -1,6 +1,8 @@
 <?php
-if ( !class_exists('MHCommon') ) {
-    class MHCommon {
+defined('ABSPATH') || exit;
+
+if ( !class_exists('WAC_MHCommon') ) {
+    class WAC_MHCommon {
         const PREMIUM_ADV_NOTICE = 'premium_advertising';
         const LICENSE_CODE_EMPTY_NOTICE = 'license_empty';
 
@@ -48,26 +50,26 @@ if ( !class_exists('MHCommon') ) {
         }
 
         /**
-         * @return MHNotice
+         * @return WAC_MHNotice
          */
         public function getNotice() {
             if ( empty($this->noticeObj) ) {
                 include_once( dirname(__FILE__) . '/MHNotice.php' );
-                $this->noticeObj = new MHNotice($this);
+                $this->noticeObj = new WAC_MHNotice($this);
             }
 
             return $this->noticeObj;
         }
 
         /**
-         * @return MHCommon
+         * @return WAC_MHCommon
          */
         public static function getInstance() {
             return self::$instance;
         }
 
         /**
-         * @return MHSettings
+         * @return WAC_MHSettings
          */
         public static function getSettings() {
             return self::getInstance()->settingsObj;
@@ -85,17 +87,17 @@ if ( !class_exists('MHCommon') ) {
             $common = self::$instance = new self($pluginAlias, $pluginTitle, $pluginBaseFile, $pluginAbbrev);
 
             include_once( dirname(__FILE__) . '/MHSettings.php' );
-            $settings = $common->settingsObj = new MHSettings($pluginAlias, $pluginAbbrev, $pluginTitle, $pluginBaseFile, $common);
+            $settings = $common->settingsObj = new WAC_MHSettings($pluginAlias, $pluginAbbrev, $pluginTitle, $pluginBaseFile, $common);
 
             $noticeObject = $common->getNotice();
 
             if ( $common->isPremiumVersion() ) {
                 if ( file_exists(dirname(__FILE__) . '/MHSupport.php') ) {
                     include_once( dirname(__FILE__) . '/MHSupport.php' );
-                    new MHSupport($pluginAlias, $pluginTitle, $pluginBaseFile, $pluginAbbrev);
+                    new WAC_MHSupport($pluginAlias, $pluginTitle, $pluginBaseFile, $pluginAbbrev);
     
                     include_once( dirname(__FILE__) . '/MHUpgrader.php' );
-                    new MHUpgrader($pluginAlias, $pluginBaseFile, $pluginTitle, $pluginAbbrev, $noticeObject);
+                    new WAC_MHUpgrader($pluginAlias, $pluginBaseFile, $pluginTitle, $pluginAbbrev, $noticeObject);
                 }
             }
             else if ( $settings->has_premium_features() ) {
