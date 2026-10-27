@@ -1,19 +1,24 @@
 === Ajax Cart for WooCommerce ===
 Contributors: moiseh
-Tags: woocommerce, ajax, cart, shipping
+Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.3.28
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Updates the WooCommerce cart totals with AJAX as soon as a quantity changes, without clicking "Update cart".
+AJAX cart for WooCommerce: totals update as soon as a quantity changes, plus a slide-in side cart that works with any theme.
 
 == Description ==
 
-Ajax Cart for WooCommerce changes the default behavior of the WooCommerce cart page: when a buyer changes the quantity of a product, the totals are recalculated right away with AJAX, without clicking the "Update cart" button.
+Ajax Cart for WooCommerce makes buying smoother in two ways:
 
-This improves the user experience when purchasing a product. No other hacks/code/theme changes is needed, this functionality is added when the plugin is activated.
+* **On the classic cart page** (the `[woocommerce_cart]` shortcode most stores and classic themes use), totals are recalculated with AJAX as soon as a quantity changes — no "Update cart" click — with -/+ buttons around the quantity.
+* **A side cart** (optional): a cart drawer that slides in from the side when a product is added, with a floating cart button — on classic and block themes alike, on every page but the cart and checkout.
+
+On the newer **Cart block** (the default for stores created since WooCommerce 8.3), WooCommerce already updates quantities by itself; there the plugin adds a confirmation before an item is removed, and the side cart works the same.
+
+No other hacks, code or theme changes are needed: the features are active as soon as the plugin is.
 
 You can try and play with this plugin demonstration [clicking here](https://tastewp.com/new?pre-installed-plugin-slug=woocommerce%2Cwoocommerce-ajax-cart&redirect=plugins.php&ni=true)
 
@@ -21,10 +26,11 @@ You can try and play with this plugin demonstration [clicking here](https://tast
 
 Free version features:
 
-* Automatically reload and recalculate Cart using AJAX when quantity changes
+* Automatically reload and recalculate the classic Cart using AJAX when quantity changes
 * Show -/+ buttons around item quantity on cart page
 * Show item quantity as select instead numeric field
-* Show user confirmation when change item quantity to zero
+* Show user confirmation when change item quantity to zero — and, on the Cart block, before an item is removed
+* Side cart: a cart drawer that slides in when a product is added, with a floating cart button and item count
 
 Premium version features:
 
@@ -33,6 +39,10 @@ Premium version features:
 * Faster AJAX reload call when change quantities in Cart page
 * Option to lock quantity inputs to allow only change using plus and minus buttons
 * Update price vs quantity calculation automatically on Single Product pages
+* Change quantities with -/+ buttons inside the side cart
+* Free shipping progress bar ("Spend $12.00 more for free shipping") in the side cart, Mini-Cart, classic Cart and Cart block — the amount read from your free shipping method, or your own
+* Undo a removed item on the Cart block
+* Minimum, maximum and step for every product quantity, on the classic and the block cart
 
 If you looking for a related plugin with more complete features maybe you can try [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability) plugin.
 
@@ -47,6 +57,12 @@ If you looking for a related plugin with more complete features maybe you can tr
 1. The cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart".
 
 == Changelog ==
+
+= 1.4.0 =
+* New: side cart — a cart drawer that slides in from the side when a product is added, with a floating cart button and item count (Settings > Side cart; off by default)
+* New: on the Cart block, a confirmation before an item is removed (with the "confirmation when quantity goes to zero" setting)
+* The description now says where each feature applies: the classic cart page, and what the Cart block already does by itself
+* Changed: a cleaner settings page — the settings in a card, one row each with the label and its field aligned, on/off settings as switches, multiple choices as chips, a setting's sub-options in a panel under it, and Reset set apart from Save
 
 = 1.3.28 =
 * Changed: the settings page's script variable, nonces and notice links now carry the plugin's own prefix; "Tested up to" is declared only in readme.txt

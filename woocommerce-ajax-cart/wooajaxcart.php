@@ -3,7 +3,7 @@
 Plugin Name: Ajax Cart for WooCommerce
 Plugin URI: https://wordpress.org/plugins/woocommerce-ajax-cart/
 Description: Updates the WooCommerce cart with AJAX as soon as a quantity changes — no "Update cart" click needed
-Version: 1.3.28
+Version: 1.4.0
 Author: Moises Heberle
 Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
@@ -27,6 +27,8 @@ if ( !function_exists('wac_init') ) {
     add_action('wp_enqueue_scripts', 'wac_enqueue_scripts' );
     add_filter('woocommerce_cart_item_quantity', 'wac_filter_woocommerce_cart_item_quantity', 10, 3);
     add_filter('wc_get_template', 'wac_get_template', 10, 5 );
+    add_action('wp_footer', 'wac_side_cart_render');
+    add_filter('woocommerce_add_to_cart_fragments', 'wac_side_cart_fragments');
 
     add_action( 'before_woocommerce_init', function() {
         if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
@@ -81,6 +83,26 @@ if ( !function_exists('wac_init') ) {
             'type' => 'checkbox',
             'default' => 'no',
         );
+        $arr['side_cart'] = array(
+            'label' => __('Enable the side cart: a cart drawer that slides in from the side, on every page but the cart and checkout', 'woocommerce-ajax-cart'),
+            'tab' => __('Side cart', 'woocommerce-ajax-cart'),
+            'type' => 'checkbox',
+            'default' => 'no',
+        );
+        $arr['side_cart_open_on_add'] = array(
+            'label' => __('Open the side cart when a product is added to the cart', 'woocommerce-ajax-cart'),
+            'tab' => __('Side cart', 'woocommerce-ajax-cart'),
+            'type' => 'checkbox',
+            'default' => 'yes',
+            'depends_on' => 'side_cart',
+        );
+        $arr['side_cart_button'] = array(
+            'label' => __('Show a floating cart button with the item count', 'woocommerce-ajax-cart'),
+            'tab' => __('Side cart', 'woocommerce-ajax-cart'),
+            'type' => 'checkbox',
+            'default' => 'yes',
+            'depends_on' => 'side_cart',
+        );
         $arr['ajax_timeout'] = array(
             'label' => __('AJAX timeout in milliseconds to refresh the cart on change', 'woocommerce-ajax-cart'),
             'tab' => __('General', 'woocommerce-ajax-cart'),
@@ -120,6 +142,65 @@ if ( !function_exists('wac_init') ) {
     
         $frontendData = wac_frontend_vars();
         wp_localize_script( 'wooajaxcart', 'wooajaxcart', $frontendData );
+
+        if ( wac_side_cart_enabled() ) {
+            // The drawer holds the Mini-Cart, which WooCommerce refreshes through its cart fragments.
+            wp_enqueue_script('wc-cart-fragments');
+            wp_enqueue_style('wac-side-cart', plugins_url('assets/wac-side-cart.css', plugin_basename(WAC_BASE_FILE)), array(), (string) filemtime($dir . 'assets/wac-side-cart.css'));
+            wp_enqueue_script('wac-side-cart', plugins_url('assets/wac-side-cart.js', plugin_basename(WAC_BASE_FILE)), array('jquery'), (string) filemtime($dir . 'assets/wac-side-cart.js'), true);
+            wp_localize_script('wac-side-cart', 'wac_side_cart', array(
+                'open_on_add' => wac_option('side_cart_open_on_add'),
+            ));
+        }
+
+        // The Cart block updates quantities by itself; what it lacks is a confirmation before an item is removed.
+        if ( is_cart() && wac_option('confirmation_zero_qty') == 'yes' && has_block('woocommerce/cart') ) {
+            wp_enqueue_script('wac-cart-block', plugins_url('assets/wac-cart-block.js', plugin_basename(WAC_BASE_FILE)), array(), (string) filemtime($dir . 'assets/wac-cart-block.js'), true);
+            wp_localize_script('wac-cart-block', 'wac_cart_block', array(
+                'warn_remove_text' => __( 'Are you sure you want to remove this item from cart?', 'woocommerce-ajax-cart' ),
+            ));
+        }
+    }
+
+    function wac_side_cart_enabled() {
+        return ( wac_option('side_cart') == 'yes' ) && function_exists('WC') && ! is_cart() && ! is_checkout();
+    }
+
+    function wac_side_cart_count() {
+        return ( function_exists('WC') && WC()->cart ) ? (int) WC()->cart->get_cart_contents_count() : 0;
+    }
+
+    // The drawer: WooCommerce's own Mini-Cart (refreshed by its cart fragments) in a panel that slides in.
+    function wac_side_cart_render() {
+        if ( ! wac_side_cart_enabled() ) {
+            return;
+        }
+
+        if ( wac_option('side_cart_button') == 'yes' ) {
+            echo '<button type="button" class="wac-side-cart-toggle" aria-controls="wac-side-cart" aria-expanded="false" aria-label="' . esc_attr__( 'Open the cart', 'woocommerce-ajax-cart' ) . '">';
+            echo '<svg class="wac-side-cart-icon" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.2 14h9.9c.8 0 1.4-.4 1.7-1.1l3.1-6.4L20.1 5.6 17.2 12H8.1L4.3 4H1v2h2l3.6 7.6-1.4 2.4C4.5 17.3 5.5 19 7 19h12v-2H7l1.1-2z"/></svg>';
+            echo '<span class="wac-side-cart-count">' . esc_html( wac_side_cart_count() ) . '</span>';
+            echo '</button>';
+        }
+
+        echo '<div class="wac-side-cart-overlay" hidden></div>';
+        echo '<aside id="wac-side-cart" class="wac-side-cart" aria-hidden="true" aria-label="' . esc_attr__( 'Cart', 'woocommerce-ajax-cart' ) . '">';
+        echo '<div class="wac-side-cart-header">';
+        echo '<span class="wac-side-cart-title">' . esc_html__( 'Your cart', 'woocommerce-ajax-cart' ) . '</span>';
+        echo '<button type="button" class="wac-side-cart-close" aria-label="' . esc_attr__( 'Close the cart', 'woocommerce-ajax-cart' ) . '">&times;</button>';
+        echo '</div>';
+        do_action('wac_side_cart_before_items');
+        echo '<div class="widget_shopping_cart wac-side-cart-body"><div class="widget_shopping_cart_content">';
+        woocommerce_mini_cart();
+        echo '</div></div>';
+        do_action('wac_side_cart_after_items');
+        echo '</aside>';
+    }
+
+    function wac_side_cart_fragments( $fragments ) {
+        $fragments['span.wac-side-cart-count'] = '<span class="wac-side-cart-count">' . esc_html( wac_side_cart_count() ) . '</span>';
+
+        return $fragments;
     }
 
     function wac_frontend_vars() {

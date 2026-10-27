@@ -197,13 +197,10 @@ if ( !class_exists('WAC_MHSettings') ) {
             $displayPremiumTab = $this->display_premium_tab();
 
             ?>
-            <div class="wrap">
-                <div class="icon32">
-                <br />
-                </div>
-                <h2 class="nav-tab-wrapper">
+            <div class="wrap mh-settings-wrap">
+                <h1 class="mh-settings-title">
                     <?php echo esc_html($title); ?>
-                </h2>
+                </h1>
                 <?php if ( $displayPremiumTab ): ?>
                     <?php $this->premium_alert_box(); ?>
                 <?php endif; ?>
@@ -247,13 +244,15 @@ if ( !class_exists('WAC_MHSettings') ) {
 
             ?>
             <?php $this->form_header() ?>
+            <div class="mh-card">
             <?php foreach ( $settings as $name => $conf ): ?>
-                <div class="conf">
-                    <?php if ( empty($conf['depends_on']) ): ?>
+                <?php if ( empty($conf['depends_on']) ): ?>
+                    <div class="conf conf-<?php echo esc_attr($conf['type']); ?>">
                         <?php $this->render_field($settings, $name, $conf) ?>
-                    <?php endif; ?>
-                </div>
+                    </div>
+                <?php endif; ?>
             <?php endforeach; ?>
+            </div>
             <?php do_action("mh_{$this->pluginAbbrev}_after_tab", $normalizedTab); ?>
             <?php $this->form_footer() ?>
             <?php
@@ -320,8 +319,9 @@ if ( !class_exists('WAC_MHSettings') ) {
             ?>
             <div class="mh-subconf">
                 <?php foreach ( $dependants as $name => $conf ): ?>
-                    <?php $this->render_field($settings, $name, $conf); ?>
-                    <br/>
+                    <div class="conf conf-<?php echo esc_attr($conf['type']); ?>">
+                        <?php $this->render_field($settings, $name, $conf); ?>
+                    </div>
                 <?php endforeach; ?>
             </div>
             <?php
@@ -378,12 +378,13 @@ if ( !class_exists('WAC_MHSettings') ) {
         
         public function form_footer() {
             ?>
-                <hr/>
-                <input name="save" class="button-primary" type="submit" value="<?php echo esc_html__('Save settings', 'woocommerce-ajax-cart'); ?>" />
-                <?php do_action("mh_{$this->pluginAbbrev}_admin_buttons"); ?>
-                <input name="save" class="button" type="submit"
+                <div class="mh-actions">
+                    <input name="save" class="button button-primary" type="submit" value="<?php echo esc_html__('Save settings', 'woocommerce-ajax-cart'); ?>" />
+                    <?php do_action("mh_{$this->pluginAbbrev}_admin_buttons"); ?>
+                    <input name="save" class="button mh-reset" type="submit"
                         value="<?php echo esc_html__('Reset all settings', 'woocommerce-ajax-cart'); ?>"
                         onclick="return confirm('<?php echo esc_html__('Are you sure?', 'woocommerce-ajax-cart') ?>')"/>
+                </div>
             </form>
             <?php
         }
@@ -532,12 +533,12 @@ if ( !class_exists('WAC_MHSettings') ) {
             
             ?>
             <input type="hidden" name="<?php echo esc_attr($name) ?>" value="0" />
-            <label>
+            <label class="mh-check">
                 <input type="checkbox"
                        <?php if ( $value === 'yes' ): ?>checked<?php endif; ?>
-                       class="<?php echo esc_attr($class) ?>"
+                       class="mh-switch <?php echo esc_attr($class) ?>"
                        name="<?php echo esc_attr($name) ?>">
-                <?php echo esc_html($label); ?>
+                <span><?php echo esc_html($label); ?></span>
             </label>
             <?php
         }
@@ -546,7 +547,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html($label); ?>:
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
             <input type="text"
                     value="<?php echo esc_attr($value); ?>"
                     size="<?php echo esc_attr($size); ?>"
@@ -558,7 +559,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html($label); ?>:
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
             <input type="number"
                     value="<?php echo esc_attr($value); ?>"
                     name="<?php echo esc_attr($name); ?>"
@@ -571,7 +572,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html($label); ?>:
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
             <input type="color"
                     value="<?php echo esc_attr($value); ?>"
                     name="<?php echo esc_attr($name); ?>">
@@ -582,7 +583,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html($label); ?>:
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
             <input type="date"
                     value="<?php echo esc_attr($value); ?>"
                     name="<?php echo esc_attr($name); ?>">
@@ -593,7 +594,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $value = $this->get_option($name);
             
             ?>
-            <?php echo esc_html($label); ?>:
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
             <select name="<?php echo esc_attr($name) ?>">
                 <?php foreach ( (array) $options as $optVal => $optLabel ): ?>
                     <option <?php if ( $value == $optVal ): ?>selected<?php endif; ?>
@@ -608,9 +609,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $options = $this->parse_field_options($options);
             
             ?>
-            <br/>
-            <?php echo esc_html($label); ?>:
-            <br/>
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
             <input type="hidden" name="<?php echo esc_attr($name); ?>" value=""/>
             <select multiple="multiple" name="<?php echo esc_attr($name); ?>[]">
                 <?php
@@ -627,15 +626,16 @@ if ( !class_exists('WAC_MHSettings') ) {
             $values = (array) $this->get_option($name, array());
 
             ?>
-            <?php echo esc_html( $label ); ?>: &nbsp;
+            <span class="mh-label"><?php echo esc_html( $label ); ?></span>
+            <span class="mh-chips">
             <?php foreach ( $options as $key => $value ): ?>
-                <label><input
+                <label class="mh-chip"><input
                             name="<?php echo esc_attr($name); ?>[]"
                             value="<?php echo esc_attr( $key ); ?>"
                             <?php if ( in_array( $key, $values ) ): ?>checked="checked"<?php endif; ?>
                             type="checkbox"/><?php echo esc_html( $value ); ?></label>
-                &nbsp;&nbsp;
             <?php endforeach; ?>
+            </span>
             <?php
         }
     }
