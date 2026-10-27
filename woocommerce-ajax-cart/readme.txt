@@ -3,7 +3,7 @@ Contributors: moiseh
 Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,7 +58,11 @@ If you looking for a related plugin with more complete features maybe you can tr
 
 == Changelog ==
 
+= 1.4.1 =
+* Changed: a cleaner Get PRO tab — the PRO features one per row with a check, a red YouTube "Watch demo" button for each feature video, and the buy button at the top and the bottom
+
 = 1.4.0 =
+* Fixed: the Side cart settings tab opened empty (a tab name with a space)
 * New: side cart — a cart drawer that slides in from the side when a product is added, with a floating cart button and item count (Settings > Side cart; off by default)
 * New: on the Cart block, a confirmation before an item is removed (with the "confirmation when quantity goes to zero" setting)
 * The description now says where each feature applies: the classic cart page, and what the Cart block already does by itself

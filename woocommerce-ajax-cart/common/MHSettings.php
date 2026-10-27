@@ -161,6 +161,8 @@ if ( !class_exists('WAC_MHSettings') ) {
             return esc_html(str_replace('.php', '', $this->active_tab()));
         }
 
+        // A tab's file name is its label through sanitize_title() ("Side cart" → tab-side-cart.php):
+        // with strtolower() alone the space stayed, active_tab() read it back as a dash and the tab was empty.
         public function normalize_tabname($tab) {
             return str_replace(array('tab-', '.php'), '', $tab);
         }
@@ -233,7 +235,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $settings = array();
 
             foreach ( $this->get_plugin_settings_definitions() as $name => $conf ) {
-                $confTab = 'tab-' . strtolower($conf['tab']) . '.php';
+                $confTab = 'tab-' . sanitize_title($conf['tab']) . '.php';
 
                 if ( $tab == $confTab ) {
                     $settings[$name] = $conf;
@@ -332,7 +334,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             $tabs = array();
 
             foreach ( $arrSettings as $conf ) {
-                $name = 'tab-' . strtolower($conf['tab']) . '.php';
+                $name = 'tab-' . sanitize_title($conf['tab']) . '.php';
                 $tabs[$name] = $conf['tab'];
             }
 
@@ -450,7 +452,8 @@ if ( !class_exists('WAC_MHSettings') ) {
         
             $readme = file_get_contents($readmeFile);
         
-            preg_match('/Premium version features:\n(.*)\n\n/isU', $readme, $match);
+            // Either heading ("Premium version features:" or "**PRO features:**", WBU's), then its bullet lines.
+            preg_match('/(?:Premium version features:|\*\*PRO features:\*\*)[ \t]*\R(?:[ \t]*\R)?((?:\*[^\r\n]*\R?)+)/i', $readme, $match);
         
             if ( !empty($match[1]) ) {
                 $features = explode("\n", $match[1]);
@@ -461,29 +464,29 @@ if ( !class_exists('WAC_MHSettings') ) {
         }
 
         public function render_premium_features() {
-            $features = $this->list_premium_features();
-            $imgYT = plugins_url('common/assets/youtube.png', $this->pluginBaseFile);
-
-            ?>
-            <?php foreach ( $features as $feature ): ?>
-                <li>
-                    <?php echo esc_html($this->format_feature_name($feature)); ?>
-                    <?php $urlDemo = $this->get_feature_youtube_demo($feature);
-                          if ( !empty($urlDemo)): ?>
-                            &nbsp;
-                            <a href="<?php echo esc_url($urlDemo); ?>" title="View demonstration video" class="mh-feature-video" target="_blank">
-                                View demo
-                                <img src="<?php echo esc_url($imgYT); ?>"/>
-                            </a>
+            foreach ( $this->list_premium_features() as $feature ) {
+                $urlDemo = $this->get_feature_youtube_demo($feature);
+                ?>
+                <li class="mh-feature">
+                    <span class="mh-feature-check" aria-hidden="true">&#10003;</span>
+                    <span class="mh-feature-name"><?php echo esc_html($this->format_feature_name($feature)); ?></span>
+                    <?php if ( !empty($urlDemo) ): ?>
+                        <a href="<?php echo esc_url($urlDemo); ?>" class="mh-feature-video" target="_blank" rel="noopener"
+                           title="<?php echo esc_attr__('Watch the demonstration video on YouTube', 'woocommerce-ajax-cart'); ?>">
+                            <svg class="mh-yt-icon" viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#fff"/><path d="M11 5.5v9l8-4.5z" fill="#f00"/></svg>
+                            <?php echo esc_html__('Watch demo', 'woocommerce-ajax-cart'); ?>
+                        </a>
                     <?php endif; ?>
                 </li>
-            <?php endforeach; ?>
-            <?php
+                <?php
+            }
         }
 
         public function format_feature_name($feature) {
-            $feature = str_replace('* ', '', $feature);
-            return preg_replace('/\[view demo\](.*)/', '', $feature);
+            $feature = preg_replace('/^\s*\*\s*/', '', $feature);
+            $feature = preg_replace('/\s*\(?\s*\[view demo\].*$/i', '', $feature);   // "… ([view demo](url))" too
+
+            return trim(str_replace('**', '', $feature));
         }
 
         public function get_feature_youtube_demo($feature) {
@@ -508,22 +511,24 @@ if ( !class_exists('WAC_MHSettings') ) {
         }
 
         public function render_buy_tab() {
+            $buyUrl = $this->get_premium_url();
             ?>
             <div class="mh-buy-div">
-                <h1>
-                    <?php echo esc_html($this->pluginTitle . ' PRO'); ?>
-                </h1>
-                <h3>
-                    <?php echo esc_html__('Features included in PRO version', 'woocommerce-ajax-cart') ?>:
-                </h3>
+                <div class="mh-buy-head">
+                    <h1 class="mh-buy-title"><?php echo esc_html($this->pluginTitle); ?> <span class="mh-pro-badge">PRO</span></h1>
+                    <a class="button button-primary mh-buy-cta" href="<?php echo esc_url($buyUrl); ?>" target="_blank" rel="noopener">
+                        <?php echo esc_html__('Buy on Gumroad', 'woocommerce-ajax-cart'); ?> &rarr;
+                    </a>
+                </div>
+                <h3 class="mh-buy-subtitle"><?php echo esc_html__('Features included in PRO version', 'woocommerce-ajax-cart'); ?></h3>
                 <ul class="mh-premium-features">
                     <?php $this->render_premium_features(); ?>
                 </ul>
-                <h1>
-                    <a href="<?php echo esc_url($this->get_premium_url()); ?>" target="_blank" style="">
-                        <?php echo esc_html__('Buy on Gumroad', 'woocommerce-ajax-cart') ?> &rarr;
+                <p class="mh-buy-footer">
+                    <a class="button button-primary button-hero mh-buy-cta" href="<?php echo esc_url($buyUrl); ?>" target="_blank" rel="noopener">
+                        <?php echo esc_html__('Buy on Gumroad', 'woocommerce-ajax-cart'); ?> &rarr;
                     </a>
-                </h1>
+                </p>
             </div>
             <?php
         }
