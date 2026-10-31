@@ -35,6 +35,11 @@
         
         listenSubConfChange();
 
+        // Colour settings: WordPress's colour picker (its "Clear" leaves the setting empty).
+        if ( $.fn.wpColorPicker ) {
+            $('.mh-settings-page .mh-color-field').wpColorPicker();
+        }
+
         // display active tab
         $('#settings-' + wac_tab_current).show();
     });

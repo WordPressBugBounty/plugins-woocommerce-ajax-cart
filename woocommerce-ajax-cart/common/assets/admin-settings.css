@@ -377,3 +377,17 @@ a.mh-feature-video:focus {
 .mh-update-message img {
     margin-bottom: -1px;
 }
+
+/* Ajax Cart's own rows: a colour picked with WordPress's colour picker, a multi-line setting. */
+.mh-settings-page .conf > .wp-picker-container {
+    justify-self: start;
+}
+
+.mh-settings-page .conf > textarea {
+    justify-self: stretch;
+    width: 100%;
+    max-width: 520px;
+    min-height: 110px;
+    border-radius: 6px;
+    font-family: Consolas, Monaco, monospace;
+}

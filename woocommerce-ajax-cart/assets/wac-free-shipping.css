@@ -1,0 +1,6 @@
+.wac-free-shipping { margin: 0 0 16px; padding: 12px 14px; border-radius: 6px; background: #f6f7f7; color: #222; }
+.wac-free-shipping[hidden] { display: none; }
+.wac-free-shipping-text { margin: 0 0 8px; font-size: .95em; }
+.wac-free-shipping-track { height: 8px; border-radius: 4px; background: #dcdcde; overflow: hidden; }
+.wac-free-shipping-track span { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--wac-accent, #e2401c); transition: width .4s ease; }
+.wac-free-shipping-done .wac-free-shipping-track span { background: #2e7d32; }

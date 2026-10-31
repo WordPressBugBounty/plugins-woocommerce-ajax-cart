@@ -73,12 +73,21 @@ if ( !class_exists('WAC_MHSettings') ) {
         
         public function merge_settings_post() {
             $defaultSettings = $this->default_settings();
+            $definitions = $this->get_plugin_settings_definitions();
             $allOptions = $this->all_options();
     
             // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only reached from settings_save(), after settings_page() checked the nonce
             foreach ( $_POST as $key => $val ) {
                 if ( in_array($key, array_keys($defaultSettings)) ) {
-                    if ( is_numeric($defaultSettings[$key]) ) {
+                    $type = isset($definitions[$key]['type']) ? $definitions[$key]['type'] : '';
+
+                    if ( $type == 'textarea' && !is_array($val) ) {
+                        $allOptions[$key] = sanitize_textarea_field(wp_unslash($val));
+                    }
+                    else if ( $type == 'color' && !is_array($val) ) {
+                        $allOptions[$key] = (string) sanitize_hex_color(sanitize_text_field(wp_unslash($val)));
+                    }
+                    else if ( is_numeric($defaultSettings[$key]) ) {
                         $allOptions[$key] = (int) sanitize_text_field(wp_unslash($val));
                     }
                     else if ( is_array($val) ) {
@@ -299,6 +308,10 @@ if ( !class_exists('WAC_MHSettings') ) {
                     $this->color($name, $conf['label']);
                     break;
 
+                case 'textarea':
+                    $this->textarea($name, $conf['label'], !empty($conf['placeholder']) ? $conf['placeholder'] : '');
+                    break;
+
                 case 'date':
                     $this->date($name, $conf['label']);
                     break;
@@ -365,8 +378,10 @@ if ( !class_exists('WAC_MHSettings') ) {
             $cssVer = file_exists($cssPath) ? filemtime($cssPath) : false;
             $jsVer = file_exists($jsPath) ? filemtime($jsPath) : false;
 
-            wp_enqueue_style( $this->pluginAbbrev . '_admin_style', plugins_url('common/assets/admin-settings.css', $this->pluginBaseFile), array(), $cssVer );
-            wp_enqueue_script( $scriptHandle, plugins_url('common/assets/admin-settings.js', $this->pluginBaseFile), array('jquery'), $jsVer, true );
+            // A colour setting is picked with WordPress's own colour picker.
+            wp_enqueue_style( 'wp-color-picker' );
+            wp_enqueue_style( $this->pluginAbbrev . '_admin_style', plugins_url('common/assets/admin-settings.css', $this->pluginBaseFile), array('wp-color-picker'), $cssVer );
+            wp_enqueue_script( $scriptHandle, plugins_url('common/assets/admin-settings.js', $this->pluginBaseFile), array('jquery', 'wp-color-picker'), $jsVer, true );
 
             wp_localize_script( $scriptHandle, 'wac_tab_current', array($this->admin_tab()));
         }
@@ -578,9 +593,21 @@ if ( !class_exists('WAC_MHSettings') ) {
             
             ?>
             <span class="mh-label"><?php echo esc_html($label); ?></span>
-            <input type="color"
+            <input type="text"
+                    class="mh-color-field"
                     value="<?php echo esc_attr($value); ?>"
                     name="<?php echo esc_attr($name); ?>">
+            <?php
+        }
+
+        public function textarea($name, $label, $placeholder = '') {
+            $value = $this->get_option($name);
+
+            ?>
+            <span class="mh-label"><?php echo esc_html($label); ?></span>
+            <textarea name="<?php echo esc_attr($name); ?>"
+                      rows="5"
+                      placeholder="<?php echo esc_attr($placeholder); ?>"><?php echo esc_textarea($value); ?></textarea>
             <?php
         }
 

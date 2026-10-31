@@ -3,18 +3,18 @@ Contributors: moiseh
 Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AJAX cart for WooCommerce: totals update as soon as a quantity changes, plus a slide-in side cart that works with any theme.
+AJAX cart for WooCommerce: totals update as soon as a quantity changes, plus a side cart with a coupon form and a free shipping bar.
 
 == Description ==
 
 Ajax Cart for WooCommerce makes buying smoother in two ways:
 
 * **On the classic cart page** (the `[woocommerce_cart]` shortcode most stores and classic themes use), totals are recalculated with AJAX as soon as a quantity changes — no "Update cart" click — with -/+ buttons around the quantity.
-* **A side cart** (optional): a cart drawer that slides in from the side when a product is added, with a floating cart button — on classic and block themes alike, on every page but the cart and checkout.
+* **A side cart** (optional): a cart drawer that slides in from the side — or a popup — when a product is added, with a floating cart button, a coupon form and a free shipping progress bar — on classic and block themes alike, on every page but the cart and checkout.
 
 On the newer **Cart block** (the default for stores created since WooCommerce 8.3), WooCommerce already updates quantities by itself; there the plugin adds a confirmation before an item is removed, and the side cart works the same.
 
@@ -22,7 +22,7 @@ No other hacks, code or theme changes are needed: the features are active as soo
 
 You can try and play with this plugin demonstration [clicking here](https://tastewp.com/new?pre-installed-plugin-slug=woocommerce%2Cwoocommerce-ajax-cart&redirect=plugins.php&ni=true)
 
-[youtube https://www.youtube.com/watch?v=nXUjO2cGljs ]
+[youtube https://www.youtube.com/watch?v=UXX8h4ClMy4]
 
 Free version features:
 
@@ -30,19 +30,27 @@ Free version features:
 * Show -/+ buttons around item quantity on cart page
 * Show item quantity as select instead numeric field
 * Show user confirmation when change item quantity to zero — and, on the Cart block, before an item is removed
-* Side cart: a cart drawer that slides in when a product is added, with a floating cart button and item count
+* Side cart: a cart drawer that slides in when a product is added — or a popup in the middle of the screen — with a floating cart button and item count
+* Coupon form inside the side cart: apply or remove a coupon without leaving the page, the totals and WooCommerce's messages right there
+* Your own look for the side cart: accent colour, the floating button's icon and corner, and its texts (title, checkout button, empty cart)
+* Free shipping progress bar ("Spend $12.00 more for free shipping") in the side cart, Mini-Cart, classic Cart and Cart block — the amount read from your free shipping method, or your own
 
 Premium version features:
 
-* Allow to change/synchronize quantities in shop, minicart and single product pages [view demo](https://youtu.be/a4w8wNlZhxk)
-* Make the `Add to cart` button to perform with AJAX, without full page reload [view demo](https://youtu.be/o0VPfMCIctc)
+* Allow to change/synchronize quantities in shop, minicart and single product pages [view demo](https://youtu.be/8p_Zu8_rcO8)
+* Make the `Add to cart` button to perform with AJAX, without full page reload [view demo](https://youtu.be/-Ko6BZUoDhQ)
 * Faster AJAX reload call when change quantities in Cart page
 * Option to lock quantity inputs to allow only change using plus and minus buttons
-* Update price vs quantity calculation automatically on Single Product pages
-* Change quantities with -/+ buttons inside the side cart
-* Free shipping progress bar ("Spend $12.00 more for free shipping") in the side cart, Mini-Cart, classic Cart and Cart block — the amount read from your free shipping method, or your own
-* Undo a removed item on the Cart block
+* Update price vs quantity calculation automatically on Single Product pages ([view demo](https://youtu.be/9ukJhstrIHc))
+* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/woS6Bvw1yPI))
+* Undo a removed item on the Cart block ([view demo](https://youtu.be/6vi2OqTngqg))
 * Minimum, maximum and step for every product quantity, on the classic and the block cart
+* Rewards progress bar: your milestones on the way to bigger orders ("$50: free gift", "$100: 10% off") in the side cart, Mini-Cart, classic Cart and Cart block — it shows the progress, the rewards are your own coupons or rules ([view demo](https://youtu.be/uhpdcL2ls7U))
+* Product suggestions in the side cart: the cart items' cross-sells (or upsells), each with an AJAX "Add" button ([view demo](https://youtu.be/NgZjkvj98rg))
+
+Get the PRO version [here](https://gum.co/wajaxcart).
+
+[youtube https://www.youtube.com/watch?v=a7MG9YykSfg]
 
 If you looking for a related plugin with more complete features maybe you can try [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability) plugin.
 
@@ -57,6 +65,12 @@ If you looking for a related plugin with more complete features maybe you can tr
 1. The cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart".
 
 == Changelog ==
+
+= 1.5.0 =
+* New: a coupon form inside the side cart — apply or remove a coupon with AJAX, the coupons applied with their discount, the subtotal after them and WooCommerce's messages in the cart; shown when coupons are enabled in WooCommerce (Settings > Side cart)
+* New: the side cart as a popup in the middle of the screen, or the drawer as before (Settings > Side cart)
+* New: the side cart's look — an accent colour (WordPress's colour picker), the floating button's icon (cart, outline cart, bag, basket) and corner (bottom right or left), and its texts: title, checkout button, empty cart (Settings > Side cart)
+* Changed: the free shipping progress bar, until now a PRO feature, is part of the free plugin — in the side cart, Mini-Cart, classic Cart and Cart block (Settings > Free shipping bar)
 
 = 1.4.1 =
 * Changed: a cleaner Get PRO tab — the PRO features one per row with a check, a red YouTube "Watch demo" button for each feature video, and the buy button at the top and the bottom
@@ -171,7 +185,5 @@ If you looking for a related plugin with more complete features maybe you can tr
 = 1.3.1 =
 * Registering scripts using common hook `wp_enqueue_scripts`
 
-
-== Frequently Asked Questions ==
 
 == Upgrade Notice ==
