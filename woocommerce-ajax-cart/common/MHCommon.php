@@ -46,6 +46,7 @@ if ( !class_exists('WAC_MHCommon') ) {
         }
 
         public function isPremiumVersion() {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             return apply_filters("mh_{$this->pluginAbbrev}_is_premium", false);
         }
 

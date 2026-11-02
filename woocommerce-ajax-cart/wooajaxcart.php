@@ -3,7 +3,7 @@
 Plugin Name: Ajax Cart for WooCommerce
 Plugin URI: https://wordpress.org/plugins/woocommerce-ajax-cart/
 Description: Updates the WooCommerce cart with AJAX as soon as a quantity changes — no "Update cart" click needed
-Version: 1.5.0
+Version: 1.5.1
 Author: Moises Heberle
 Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
@@ -37,6 +37,7 @@ if ( !function_exists('wac_init') ) {
         }
     } );
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_init() {
         // common lib init
         include_once( 'common/MHCommon.php' );
@@ -50,12 +51,15 @@ if ( !function_exists('wac_init') ) {
         // plugin checks
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only marks the shopper's own AJAX cart refresh as a cart request; changes no data
         if ( !empty($_POST['is_wac_ajax']) && !defined( 'WOOCOMMERCE_CART' ) ) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WooCommerce's own constant: marks the request as a cart request
             define( 'WOOCOMMERCE_CART', true );
         }
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
         do_action('wac_init');
     }
     
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_settings($arr) {
         $arr['show_qty_buttons'] = array(
             'label' => __('Display -/+ buttons around product quantity input', 'woocommerce-ajax-cart'),
@@ -195,14 +199,18 @@ if ( !function_exists('wac_init') ) {
         return $arr;
     }
     
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_premium_url() {
         return 'http://gum.co/wajaxcart';
     }
     
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_option($name) {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
         return apply_filters('mh_wac_setting_value', $name);
     }
     
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_enqueue_scripts() {
         // check if WooCommerce was enabled
         if ( !class_exists('WooCommerce') ) {
@@ -245,7 +253,9 @@ if ( !function_exists('wac_init') ) {
         }
     }
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_frontend_vars() {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
         return apply_filters('wac_frontend_vars', array(
             'updating_text' => __( 'Updating...', 'woocommerce-ajax-cart' ),
             'warn_remove_text' => __( 'Are you sure you want to remove this item from cart?', 'woocommerce-ajax-cart' ),
@@ -256,6 +266,7 @@ if ( !function_exists('wac_init') ) {
     
     // define the woocommerce_cart_item_quantity callback
     // add the + and - buttons
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_filter_woocommerce_cart_item_quantity( $inputDiv, $cart_item_key, $cart_item = null ) {
         // check config
         if ( ( wac_option('show_qty_buttons') == 'no' ) || preg_match('/type=\"hidden\"/', $inputDiv) ) {
@@ -274,17 +285,21 @@ if ( !function_exists('wac_init') ) {
         $input = str_replace(array('<div class="quantity">', '</div>'), array('', ''), $inputDiv);
         $newDiv = '<div class="quantity wac-quantity">' . $minus . $input . $plus . '</div>';
     
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
         return apply_filters('wac_quantity_div', $newDiv);
     };
     
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_button_link($label, $identifier) {
         $html  = '<a href="" class="wac-qty-button wac-btn-'.$identifier.'">';
         $html .= $label;
         $html .= '</a>';
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
         return apply_filters('wac_button_link', $html);
     }
     
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_get_template( $located, $template_name, $args, $template_path, $default_path ) {
     
         // ignore if select disabled
@@ -302,6 +317,7 @@ if ( !function_exists('wac_init') ) {
             }
         }
     
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
         return apply_filters('wac_template_file', $located, $template_name, $args);
     }
 }

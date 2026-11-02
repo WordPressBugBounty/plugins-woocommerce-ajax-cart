@@ -29,8 +29,11 @@ if ( !class_exists('WAC_MHSettings') ) {
 
         public function settings_menu() {
             $pluginAbbrev = $this->pluginAbbrev;
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             $title = apply_filters("mh_{$pluginAbbrev}_menu_title", str_replace('WooCommerce ', '', $this->common->getPluginTitle()));
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             $parentMenu = apply_filters("mh_{$pluginAbbrev}_parent_menu", 'woocommerce');
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             $menuSlug = apply_filters("mh_{$pluginAbbrev}_menu_slug", $this->pluginAlias);
 
             add_submenu_page(
@@ -67,6 +70,7 @@ if ( !class_exists('WAC_MHSettings') ) {
                 }
             }
 
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             $opts = apply_filters("mh_{$this->pluginAbbrev}_saving_options", $opts);
             update_option($this->pluginAbbrev . '_settings', $opts);
         }
@@ -130,6 +134,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             }
             
             else {
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
                 $page = apply_filters("mh_{$this->pluginAbbrev}_menu_slug", $this->pluginAlias);
             }
 
@@ -197,6 +202,7 @@ if ( !class_exists('WAC_MHSettings') ) {
                         update_option($this->pluginAbbrev . '_settings', $this->default_settings());
                     break;
                     default:
+                        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
                         do_action("mh_{$this->pluginAbbrev}_trigger_save", $btnClick);
                     break;
                 }
@@ -264,7 +270,7 @@ if ( !class_exists('WAC_MHSettings') ) {
                 <?php endif; ?>
             <?php endforeach; ?>
             </div>
-            <?php do_action("mh_{$this->pluginAbbrev}_after_tab", $normalizedTab); ?>
+            <?php do_action("mh_{$this->pluginAbbrev}_after_tab", $normalizedTab); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it) ?>
             <?php $this->form_footer() ?>
             <?php
         }
@@ -366,6 +372,7 @@ if ( !class_exists('WAC_MHSettings') ) {
         }
 
         public function get_plugin_settings_definitions() {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             return apply_filters("mh_{$this->pluginAbbrev}_settings", array());
         }
         
@@ -397,7 +404,7 @@ if ( !class_exists('WAC_MHSettings') ) {
             ?>
                 <div class="mh-actions">
                     <input name="save" class="button button-primary" type="submit" value="<?php echo esc_html__('Save settings', 'woocommerce-ajax-cart'); ?>" />
-                    <?php do_action("mh_{$this->pluginAbbrev}_admin_buttons"); ?>
+                    <?php do_action("mh_{$this->pluginAbbrev}_admin_buttons"); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it) ?>
                     <input name="save" class="button mh-reset" type="submit"
                         value="<?php echo esc_html__('Reset all settings', 'woocommerce-ajax-cart'); ?>"
                         onclick="return confirm('<?php echo esc_html__('Are you sure?', 'woocommerce-ajax-cart') ?>')"/>
@@ -421,6 +428,7 @@ if ( !class_exists('WAC_MHSettings') ) {
         }
 
         public function get_premium_url() {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
             return apply_filters("mh_{$this->pluginAbbrev}_premium_url", '');
         }
 

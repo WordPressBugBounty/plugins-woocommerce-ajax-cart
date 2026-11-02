@@ -10,19 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 add_action('wp_footer', 'wac_side_cart_render');
 add_filter('woocommerce_add_to_cart_fragments', 'wac_side_cart_fragments');
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_enabled() {
     return ( wac_option('side_cart') == 'yes' ) && function_exists('WC') && ! is_cart() && ! is_checkout();
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_count() {
     return ( function_exists('WC') && WC()->cart ) ? (int) WC()->cart->get_cart_contents_count() : 0;
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_mode() {
     return ( wac_option('side_cart_mode') == 'popup' ) ? 'popup' : 'drawer';
 }
 
 // The accent colour picked in the settings, '' when none (the side cart keeps its own colours).
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_accent() {
     $color = sanitize_hex_color( (string) wac_option('side_cart_accent') );
 
@@ -30,11 +34,13 @@ function wac_side_cart_accent() {
 }
 
 // The coupon form: on in the settings, and coupons on in WooCommerce (WooCommerce > Settings > General).
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_coupon_enabled() {
     return ( wac_option('side_cart_coupon') == 'yes' ) && function_exists('wc_coupons_enabled') && wc_coupons_enabled();
 }
 
 // The floating button's icons: [ fill style, inner SVG ].
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_icons() {
     return array(
         'cart' => array('fill', '<path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.2 14h9.9c.8 0 1.4-.4 1.7-1.1l3.1-6.4L20.1 5.6 17.2 12H8.1L4.3 4H1v2h2l3.6 7.6-1.4 2.4C4.5 17.3 5.5 19 7 19h12v-2H7l1.1-2z"/>'),
@@ -44,6 +50,7 @@ function wac_side_cart_icons() {
     );
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_icon_svg() {
     $icons = wac_side_cart_icons();
     $key = (string) wac_option('side_cart_icon');
@@ -56,6 +63,7 @@ function wac_side_cart_icon_svg() {
 }
 
 // What the side cart prints besides WordPress's post HTML: its SVG icons and the coupon form.
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_allowed_html() {
     $allowed = wp_kses_allowed_html('post');
     $svg = array('class' => true, 'viewbox' => true, 'width' => true, 'height' => true, 'aria-hidden' => true, 'focusable' => true,
@@ -74,12 +82,14 @@ function wac_side_cart_allowed_html() {
     return $allowed;
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_title() {
     $title = trim( (string) wac_option('side_cart_title') );
 
     return ( $title !== '' ) ? $title : __( 'Your cart', 'woocommerce-ajax-cart' );
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_render() {
     if ( ! wac_side_cart_enabled() ) {
         return;
@@ -105,12 +115,14 @@ function wac_side_cart_render() {
     // One scrolling column: the Mini-Cart's own parts are laid out around the coupon form by CSS (order).
     echo '<div class="wac-side-cart-body">';
     echo '<div class="wac-side-cart-before">';
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
     do_action('wac_side_cart_before_items');
     echo '</div>';
     echo '<div class="widget_shopping_cart"><div class="widget_shopping_cart_content">';
     woocommerce_mini_cart();
     echo '</div></div>';
     echo '<div class="wac-side-cart-after">';
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
     do_action('wac_side_cart_after_items');
     echo '</div>';
     echo wp_kses( wac_side_cart_coupon_html(), wac_side_cart_allowed_html() );
@@ -124,6 +136,7 @@ function wac_side_cart_render() {
  * subtotal after them. Its nonces travel with it: a cart fragment, rendered again after every
  * change, so a guest whose session began with an AJAX add to cart gets nonces of that session.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_coupon_html() {
     if ( ! wac_side_cart_coupon_enabled() || ! function_exists('WC') || ! WC()->cart || WC()->cart->is_empty() ) {
         return '<div class="wac-side-cart-coupon" hidden></div>';
@@ -156,6 +169,7 @@ function wac_side_cart_coupon_html() {
 }
 
 // The subtotal shown, less the discounts (what the free shipping method compares with its minimum too).
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_cart_total_after_discounts() {
     $cart = WC()->cart;
     $total = (float) $cart->get_displayed_subtotal();
@@ -167,6 +181,7 @@ function wac_cart_total_after_discounts() {
     return max(0, $total);
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_fragments( $fragments ) {
     $fragments['span.wac-side-cart-count'] = '<span class="wac-side-cart-count">' . esc_html( wac_side_cart_count() ) . '</span>';
 
@@ -177,6 +192,7 @@ function wac_side_cart_fragments( $fragments ) {
     return $fragments;
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_enqueue() {
     $dir = plugin_dir_path(WAC_BASE_FILE);
     $base = plugin_basename(WAC_BASE_FILE);

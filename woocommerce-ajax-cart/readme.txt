@@ -3,7 +3,7 @@ Contributors: moiseh
 Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,10 +42,10 @@ Premium version features:
 * Faster AJAX reload call when change quantities in Cart page
 * Option to lock quantity inputs to allow only change using plus and minus buttons
 * Update price vs quantity calculation automatically on Single Product pages ([view demo](https://youtu.be/9ukJhstrIHc))
-* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/woS6Bvw1yPI))
-* Undo a removed item on the Cart block ([view demo](https://youtu.be/6vi2OqTngqg))
+* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/nl5G8h2ppiA))
+* Undo a removed item on the Cart block ([view demo](https://youtu.be/8iwx75FxTo0))
 * Minimum, maximum and step for every product quantity, on the classic and the block cart
-* Rewards progress bar: your milestones on the way to bigger orders ("$50: free gift", "$100: 10% off") in the side cart, Mini-Cart, classic Cart and Cart block — it shows the progress, the rewards are your own coupons or rules ([view demo](https://youtu.be/uhpdcL2ls7U))
+* Rewards progress bar: your milestones on the way to bigger orders ("$50: free gift", "$100: 10% off") in the side cart, Mini-Cart, classic Cart and Cart block — it shows the progress, the rewards are your own coupons or rules ([view demo](https://youtu.be/VZEhx2PCi1Y))
 * Product suggestions in the side cart: the cart items' cross-sells (or upsells), each with an AJAX "Add" button ([view demo](https://youtu.be/NgZjkvj98rg))
 
 Get the PRO version [here](https://gum.co/wajaxcart).
@@ -62,9 +62,16 @@ If you looking for a related plugin with more complete features maybe you can tr
 
 == Screenshots ==
 
-1. The cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart".
+1. The classic cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart" — with the free shipping progress bar.
+2. The side cart opens when a product is added: a coupon form, the discount and the total after it, and the free shipping progress bar.
+3. The side cart as a popup, in your accent colour, with the floating cart button and its item count.
+4. The free shipping progress bar on WooCommerce's Cart block.
+5. The side cart settings: drawer or popup, coupon form, accent colour, the floating button's icon and corner, and the texts.
 
 == Changelog ==
+
+= 1.5.1 =
+* Hardened: WordPress.org Plugin Check warnings (2026-11-02) — every hook and function name checked and documented as the plugin's own, WooCommerce's constant and template variables marked as such
 
 = 1.5.0 =
 * New: a coupon form inside the side cart — apply or remove a coupon with AJAX, the coupons applied with their discount, the subtotal after them and WooCommerce's messages in the cart; shown when coupons are enabled in WooCommerce (Settings > Side cart)

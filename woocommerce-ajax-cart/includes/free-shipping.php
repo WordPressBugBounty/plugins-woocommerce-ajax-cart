@@ -14,6 +14,7 @@ add_filter('render_block_woocommerce/cart', 'wac_cart_block_free_shipping', 10, 
  * The order amount that gives free shipping: the setting, or the minimum of the
  * free shipping method in the shopper's shipping zone. 0 when there is none.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_free_shipping_threshold() {
     $manual = (float) str_replace(',', '.', (string) wac_option('free_shipping_amount'));
     if ( $manual > 0 ) {
@@ -41,6 +42,7 @@ function wac_free_shipping_threshold() {
     return 0;
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_free_shipping_bar_html() {
     $hidden = '<div class="wac-free-shipping" hidden></div>';
     if ( wac_option('free_shipping_bar') != 'yes' || !function_exists('WC') || !WC()->cart || WC()->cart->is_empty() ) {
@@ -67,22 +69,28 @@ function wac_free_shipping_bar_html() {
 }
 
 // The bar printed in the Mini-Cart and the classic Cart; `wac_progress_bar_html` lets another bar take its place.
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_progress_bar_html() {
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
     return (string) apply_filters('wac_progress_bar_html', wac_free_shipping_bar_html());
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_print_free_shipping_bar() {
     echo wp_kses_post( wac_progress_bar_html() );
 }
 
 // Whether the Cart block gets the bar (`wac_free_shipping_block_enabled`: false when another bar takes its place).
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_free_shipping_block_enabled() {
     $enabled = ( wac_option('free_shipping_bar') == 'yes' ) && wac_free_shipping_threshold() > 0;
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
     return (bool) apply_filters('wac_free_shipping_block_enabled', $enabled);
 }
 
 // The Cart block: an empty bar the block script fills from the cart's live totals.
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_cart_block_free_shipping($content) {
     if ( ! wac_free_shipping_block_enabled() ) {
         return $content;
@@ -91,6 +99,7 @@ function wac_cart_block_free_shipping($content) {
     return '<div class="wac-free-shipping wac-free-shipping-block" hidden><p class="wac-free-shipping-text"></p><div class="wac-free-shipping-track"><span></span></div></div>' . $content;
 }
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_free_shipping_enqueue() {
     $dir = plugin_dir_path(WAC_BASE_FILE);
     $base = plugin_basename(WAC_BASE_FILE);

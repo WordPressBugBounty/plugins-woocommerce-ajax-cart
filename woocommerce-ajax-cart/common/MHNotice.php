@@ -58,6 +58,7 @@ if ( !class_exists('WAC_MHNotice') ) {
                 }
                 
                 // custom hook to prevent display notices
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- public hook name (the plugin's abbreviation + the notice) kept for compatibility
                 if ( !apply_filters($this->common->getPluginAbbrev() . '_' . $alias, true) ) {
                     continue;
                 }

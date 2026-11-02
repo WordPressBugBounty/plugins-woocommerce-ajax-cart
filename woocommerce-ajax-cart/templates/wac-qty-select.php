@@ -16,7 +16,9 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- a template variable, local to wc_get_template()'s scope, not a global
 $min_value = isset($min_value) ? $min_value : 0;
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- a template variable, local to wc_get_template()'s scope, not a global
 $step = isset($step) ? $step : 1;
 ?>
 <div class="quantity">
@@ -25,13 +27,13 @@ $step = isset($step) ? $step : 1;
             class="input-text qty text"
             max="<?php echo esc_attr( wac_option('select_items') ); ?>">
         <?php if ( !empty($dropdown_steps) ): ?>
-            <?php foreach ( $dropdown_steps as $step ): ?>
+            <?php foreach ( $dropdown_steps as $step ): // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- a template variable, local to wc_get_template()'s scope, not a global ?>
                 <option <?php selected( $input_value, $step ); ?> value="<?php echo esc_attr( $step ); ?>">
                     <?php echo esc_html( $step ); ?>
                 </option>
             <?php endforeach; ?>
         <?php else: ?>
-            <?php for ( $i = $min_value; $i <= wac_option('select_items') && ( empty($max_value) || $i <= $max_value ); $i += $step ): ?>
+            <?php for ( $i = $min_value; $i <= wac_option('select_items') && ( empty($max_value) || $i <= $max_value ); $i += $step ): // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- a template variable, local to wc_get_template()'s scope, not a global ?>
                 <option <?php selected( $input_value, $i ); ?> value="<?php echo esc_attr( $i ); ?>">
                     <?php echo esc_html( $i ); ?>
                 </option>
