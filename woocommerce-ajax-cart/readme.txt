@@ -3,7 +3,7 @@ Contributors: moiseh
 Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,24 @@ If you looking for a related plugin with more complete features maybe you can tr
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Done. This plugin no requires extra configurations to work
 
+== Frequently Asked Questions ==
+
+= Can a developer change what the plugin does? =
+
+Yes, with WordPress hooks (filters and actions) and JavaScript events, in a child theme's functions.php or a small plugin:
+
+* `wac_side_cart_enabled` (filter, bool `$enabled`): the side cart and its floating button on or off on the current page.
+* `wac_side_cart_before_items` / `wac_side_cart_after_items` (actions): print your own HTML in the side cart, above or below its items.
+* `wac_free_shipping_threshold` (filter, float `$threshold`): the order amount that gives free shipping, as the bars show it — for example converted to the shopper's currency; 0 hides the bar.
+* `wac_progress_bar_html` (filter, string `$html`): the free shipping bar printed in the side cart, Mini-Cart and classic Cart.
+* `wac_free_shipping_block_enabled` (filter, bool `$enabled`): whether the Cart block gets the free shipping bar.
+* `wac_quantity_div` (filter: `$html`, `$cart_item_key`, `$cart_item`, `$original_html`): a cart item's quantity field with its -/+ buttons.
+* `wac_button_link` (filter: `$html`, `$label`, `$identifier` — `sub` or `inc`): the HTML of a - or + button.
+* `wac_template_file` (filter: `$located`, `$template_name`, `$args`): the quantity dropdown template ("Show item quantity as select").
+* `wac_frontend_vars` (filter, array `$vars`): the settings and texts the cart script reads.
+* `mh_wac_settings` (filter, array `$settings`): the settings, with their defaults.
+* `wac_before_cart_update` (JavaScript event on `document.body`, with the quantity field): just before a changed quantity updates the classic cart.
+
 == Screenshots ==
 
 1. The classic cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart" — with the free shipping progress bar.
@@ -69,6 +87,13 @@ If you looking for a related plugin with more complete features maybe you can tr
 5. The side cart settings: drawer or popup, coupon form, accent colour, the floating button's icon and corner, and the texts.
 
 == Changelog ==
+
+= 1.5.2 =
+* Developers: new hooks — `wac_side_cart_enabled` (the side cart on or off on a page), `wac_free_shipping_threshold` (the free shipping amount, for example in the shopper's currency), more arguments on `wac_quantity_div` and `wac_button_link`, and the JavaScript event `wac_before_cart_update`; every hook is listed in the FAQ (2026-11-03)
+* Hardened: the plugin declares to WooCommerce that it works with the Cart and Checkout blocks (WooCommerce 8.x listed a plugin that did not as incompatible) (2026-11-03)
+* Fixed: on themes with a grid product layout, every cart refresh started one more half-second timer re-binding the -/+ buttons; there is one timer now (2026-11-03)
+* Hardened: the scripts cleaned up, with no change in what they do — the functions other code calls are declared on purpose, repeated code merged, the deprecated `$.trim()` (jQuery 3.5) replaced, and the Cart block's bars read the cart's totals through one shared script (2026-11-03)
+* Fixed: WooCommerce's System Status no longer lists the plugin's quantity dropdown template as out of date ("version 4.0.0 is out of date") — it follows WooCommerce's current quantity template: a label for screen readers, the field's id and WooCommerce's classes (2026-11-03)
 
 = 1.5.1 =
 * Hardened: WordPress.org Plugin Check warnings (2026-11-02) — every hook and function name checked and documented as the plugin's own, WooCommerce's constant and template variables marked as such

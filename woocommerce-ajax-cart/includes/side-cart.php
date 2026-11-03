@@ -12,7 +12,19 @@ add_filter('woocommerce_add_to_cart_fragments', 'wac_side_cart_fragments');
 
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_side_cart_enabled() {
-    return ( wac_option('side_cart') == 'yes' ) && function_exists('WC') && ! is_cart() && ! is_checkout();
+    $enabled = ( wac_option('side_cart') == 'yes' ) && function_exists('WC') && ! is_cart() && ! is_checkout();
+
+    /**
+     * Filters whether the side cart (and its floating button) is on this page — to leave it off
+     * a landing page, or to show it to some shoppers only.
+     *
+     * @since 1.5.2
+     *
+     * @param bool $enabled True when the "Enable the side cart" setting is on and the page is
+     *                      not the Cart or the Checkout.
+     */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO
+    return (bool) apply_filters('wac_side_cart_enabled', $enabled);
 }
 
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it

@@ -6,6 +6,10 @@ jQuery(function($){
     var $overlay = $('.wac-side-cart-overlay');
     var $toggle = $('.wac-side-cart-toggle');
     var vars = window.wac_side_cart || {};
+    // One of WooCommerce's wc-ajax endpoints (remove_from_cart, apply_coupon, remove_coupon).
+    var endpoint = function(name) {
+        return String(vars.wc_ajax_url || '').replace('%%endpoint%%', name);
+    };
 
     var open = function() {
         $panel.addClass('wac-open').attr('aria-hidden', 'false');
@@ -90,9 +94,6 @@ jQuery(function($){
     $(document.body).on('wc_fragments_refreshed wc_fragments_loaded added_to_cart removed_from_cart', applyTexts);
 
     // --- The coupon form: WooCommerce's own AJAX endpoints, as on its Cart page ----------------
-    var endpoint = function(name) {
-        return String(vars.wc_ajax_url || '').replace('%%endpoint%%', name);
-    };
     var $notices = $panel.find('.wac-side-cart-notices');
     var showNotices = function(html) {
         $notices.html(html);
@@ -123,7 +124,7 @@ jQuery(function($){
     $panel.on('submit', '.wac-coupon-form', function(e){
         e.preventDefault();
         var $form = $(this);
-        var code = $.trim($form.find('.wac-coupon-code').val());
+        var code = String($form.find('.wac-coupon-code').val() || '').trim();   // $.trim() is deprecated since jQuery 3.5
         if ( !code ) {
             $form.find('.wac-coupon-code').trigger('focus');
             return;

@@ -3,7 +3,7 @@
 Plugin Name: Ajax Cart for WooCommerce
 Plugin URI: https://wordpress.org/plugins/woocommerce-ajax-cart/
 Description: Updates the WooCommerce cart with AJAX as soon as a quantity changes — no "Update cart" click needed
-Version: 1.5.1
+Version: 1.5.2
 Author: Moises Heberle
 Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
@@ -34,6 +34,9 @@ if ( !function_exists('wac_init') ) {
     add_action( 'before_woocommerce_init', function() {
         if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
             \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+            // The Cart and Checkout blocks: the side cart, the free shipping bar and the removal
+            // confirmation work on them too (the block cart updates its quantities by itself).
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
         }
     } );
 
@@ -284,10 +287,20 @@ if ( !function_exists('wac_init') ) {
     
         $input = str_replace(array('<div class="quantity">', '</div>'), array('', ''), $inputDiv);
         $newDiv = '<div class="quantity wac-quantity">' . $minus . $input . $plus . '</div>';
-    
+
+        /**
+         * Filters a cart item's quantity field with its -/+ buttons, on the classic Cart page.
+         *
+         * @since 1.5.2 The $cart_item_key, $cart_item and $original_html parameters.
+         *
+         * @param string     $html          The field between its buttons, in `<div class="quantity wac-quantity">`.
+         * @param string     $cart_item_key The cart item's key.
+         * @param array|null $cart_item     The cart item.
+         * @param string     $original_html WooCommerce's field, without the buttons.
+         */
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
-        return apply_filters('wac_quantity_div', $newDiv);
-    };
+        return apply_filters('wac_quantity_div', $newDiv, $cart_item_key, $cart_item, $inputDiv);
+    }
     
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_button_link($label, $identifier) {
@@ -295,8 +308,19 @@ if ( !function_exists('wac_init') ) {
         $html .= $label;
         $html .= '</a>';
 
+        /**
+         * Filters the HTML of a - or + quantity button (Cart page; with the PRO, the product,
+         * shop and Mini-Cart quantities too). Keep its `wac-qty-button wac-btn-sub|inc` classes:
+         * the script finds the buttons by them.
+         *
+         * @since 1.5.2 The $label and $identifier parameters.
+         *
+         * @param string $html       The button: `<a href="" class="wac-qty-button wac-btn-…">`.
+         * @param string $label      Its text: "-" or "+".
+         * @param string $identifier "sub" (the - button) or "inc" (the + button).
+         */
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
-        return apply_filters('wac_button_link', $html);
+        return apply_filters('wac_button_link', $html, $label, $identifier);
     }
     
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it

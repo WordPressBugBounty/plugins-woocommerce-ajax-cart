@@ -2,21 +2,21 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Ajax Cart for WooCommerce 1.5.1\n"
+"Project-Id-Version: Ajax Cart for WooCommerce 1.5.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-ajax-cart\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-02T14:50:28+00:00\n"
+"POT-Creation-Date: 2026-11-03T14:28:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woocommerce-ajax-cart\n"
 
 #. Plugin Name of the plugin
 #: wooajaxcart.php
-#: wooajaxcart.php:48
+#: wooajaxcart.php:51
 msgid "Ajax Cart for WooCommerce"
 msgstr ""
 
@@ -106,202 +106,213 @@ msgid "Features included in PRO version"
 msgstr ""
 
 #. translators: %s: the amount still to spend, with its currency
-#: includes/free-shipping.php:62
-#: includes/free-shipping.php:119
+#: includes/free-shipping.php:78
+#: includes/free-shipping.php:137
 #, php-format
 msgid "Spend %s more for free shipping"
 msgstr ""
 
-#: includes/free-shipping.php:63
-#: includes/free-shipping.php:120
+#: includes/free-shipping.php:79
+#: includes/free-shipping.php:138
 msgid "You have free shipping!"
 msgstr ""
 
-#: includes/side-cart.php:89
+#: includes/side-cart.php:101
 msgid "Your cart"
 msgstr ""
 
-#: includes/side-cart.php:102
+#: includes/side-cart.php:114
 msgid "Open the cart"
 msgstr ""
 
-#: includes/side-cart.php:110
-#: wooajaxcart.php:140
+#: includes/side-cart.php:122
+#: wooajaxcart.php:143
 msgid "Cart"
 msgstr ""
 
-#: includes/side-cart.php:113
+#: includes/side-cart.php:125
 msgid "Close the cart"
 msgstr ""
 
-#: includes/side-cart.php:148
+#: includes/side-cart.php:160
 msgid "Coupon code"
 msgstr ""
 
-#: includes/side-cart.php:149
+#: includes/side-cart.php:161
 msgid "Apply"
 msgstr ""
 
-#: includes/side-cart.php:159
+#: includes/side-cart.php:171
 msgid "Applied"
 msgstr ""
 
 #. translators: %s: the coupon code
-#: includes/side-cart.php:161
+#: includes/side-cart.php:173
 #, php-format
 msgid "Remove the coupon %s"
 msgstr ""
 
 #. translators: %s: the coupon code
-#: includes/side-cart.php:161
+#: includes/side-cart.php:173
 msgid "Remove"
 msgstr ""
 
-#: includes/side-cart.php:165
+#: includes/side-cart.php:177
 msgid "After discounts"
 msgstr ""
 
-#: includes/side-cart.php:211
+#: includes/side-cart.php:223
 msgid "The coupon could not be applied. Please reload the page and try again."
 msgstr ""
 
-#: templates/wac-qty-select.php:26
+#. translators: %s: the product's name.
+#: templates/wac-qty-select.php:33
+#, php-format
+msgid "%s quantity"
+msgstr ""
+
+#. translators: %s: the product's name.
+#: templates/wac-qty-select.php:33
+msgid "Quantity"
+msgstr ""
+
+#: templates/wac-qty-select.php:51
 msgctxt "Product quantity input tooltip"
 msgid "Qty"
 msgstr ""
 
-#: wooajaxcart.php:65
+#: wooajaxcart.php:68
 msgid "Display -/+ buttons around product quantity input"
 msgstr ""
 
-#: wooajaxcart.php:66
-#: wooajaxcart.php:72
-#: wooajaxcart.php:78
-#: wooajaxcart.php:87
-#: wooajaxcart.php:192
+#: wooajaxcart.php:69
+#: wooajaxcart.php:75
+#: wooajaxcart.php:81
+#: wooajaxcart.php:90
+#: wooajaxcart.php:195
 msgid "General"
 msgstr ""
 
-#: wooajaxcart.php:71
+#: wooajaxcart.php:74
 msgid "Show item quantity as select instead numeric field"
 msgstr ""
 
-#: wooajaxcart.php:77
+#: wooajaxcart.php:80
 msgid "Items to show on select"
 msgstr ""
 
-#: wooajaxcart.php:86
+#: wooajaxcart.php:89
 msgid "Show user confirmation when change item quantity to zero or empty"
 msgstr ""
 
-#: wooajaxcart.php:92
+#: wooajaxcart.php:95
 msgid "Enable the side cart: a cart that slides in from the side (or opens as a popup), on every page but the cart and checkout"
 msgstr ""
 
-#: wooajaxcart.php:93
-#: wooajaxcart.php:99
-#: wooajaxcart.php:106
-#: wooajaxcart.php:113
-#: wooajaxcart.php:120
-#: wooajaxcart.php:130
-#: wooajaxcart.php:136
-#: wooajaxcart.php:148
-#: wooajaxcart.php:158
-#: wooajaxcart.php:165
-#: wooajaxcart.php:172
+#: wooajaxcart.php:96
+#: wooajaxcart.php:102
+#: wooajaxcart.php:109
+#: wooajaxcart.php:116
+#: wooajaxcart.php:123
+#: wooajaxcart.php:133
+#: wooajaxcart.php:139
+#: wooajaxcart.php:151
+#: wooajaxcart.php:161
+#: wooajaxcart.php:168
+#: wooajaxcart.php:175
 msgid "Side cart"
 msgstr ""
 
-#: wooajaxcart.php:98
+#: wooajaxcart.php:101
 msgid "Open the side cart when a product is added to the cart"
 msgstr ""
 
-#: wooajaxcart.php:105
+#: wooajaxcart.php:108
 msgid "Show a floating cart button with the item count"
 msgstr ""
 
-#: wooajaxcart.php:112
+#: wooajaxcart.php:115
 msgid "Show a coupon form in the side cart (when coupons are enabled in WooCommerce)"
 msgstr ""
 
-#: wooajaxcart.php:119
+#: wooajaxcart.php:122
 msgid "Side cart style: a drawer that slides in from the side, or a popup in the middle of the screen"
 msgstr ""
 
-#: wooajaxcart.php:124
+#: wooajaxcart.php:127
 msgid "Drawer"
 msgstr ""
 
-#: wooajaxcart.php:125
+#: wooajaxcart.php:128
 msgid "Popup"
 msgstr ""
 
-#: wooajaxcart.php:129
+#: wooajaxcart.php:132
 msgid "Accent colour (floating button, checkout button, progress bar) — empty: the default colours"
 msgstr ""
 
-#: wooajaxcart.php:135
+#: wooajaxcart.php:138
 msgid "Floating button icon"
 msgstr ""
 
-#: wooajaxcart.php:141
+#: wooajaxcart.php:144
 msgid "Cart (outline)"
 msgstr ""
 
-#: wooajaxcart.php:142
+#: wooajaxcart.php:145
 msgid "Shopping bag"
 msgstr ""
 
-#: wooajaxcart.php:143
+#: wooajaxcart.php:146
 msgid "Basket"
 msgstr ""
 
-#: wooajaxcart.php:147
+#: wooajaxcart.php:150
 msgid "Floating button position"
 msgstr ""
 
-#: wooajaxcart.php:152
+#: wooajaxcart.php:155
 msgid "Bottom right"
 msgstr ""
 
-#: wooajaxcart.php:153
+#: wooajaxcart.php:156
 msgid "Bottom left"
 msgstr ""
 
-#: wooajaxcart.php:157
+#: wooajaxcart.php:160
 msgid "Side cart title (empty: \"Your cart\")"
 msgstr ""
 
-#: wooajaxcart.php:164
+#: wooajaxcart.php:167
 msgid "Checkout button text (empty: WooCommerce's \"Checkout\")"
 msgstr ""
 
-#: wooajaxcart.php:171
+#: wooajaxcart.php:174
 msgid "Empty cart text (empty: WooCommerce's \"No products in the cart.\")"
 msgstr ""
 
-#: wooajaxcart.php:178
+#: wooajaxcart.php:181
 msgid "Show a free shipping progress bar in the side cart, Mini-Cart, Cart page and Cart block"
 msgstr ""
 
-#: wooajaxcart.php:179
-#: wooajaxcart.php:185
+#: wooajaxcart.php:182
+#: wooajaxcart.php:188
 msgid "Free shipping bar"
 msgstr ""
 
-#: wooajaxcart.php:184
+#: wooajaxcart.php:187
 msgid "Order amount for free shipping (empty: read from the free shipping method of the shopper's shipping zone)"
 msgstr ""
 
-#: wooajaxcart.php:191
+#: wooajaxcart.php:194
 msgid "AJAX timeout in milliseconds to refresh the cart on change"
 msgstr ""
 
-#: wooajaxcart.php:251
-#: wooajaxcart.php:261
+#: wooajaxcart.php:254
+#: wooajaxcart.php:264
 msgid "Are you sure you want to remove this item from cart?"
 msgstr ""
 
-#: wooajaxcart.php:260
+#: wooajaxcart.php:263
 msgid "Updating..."
 msgstr ""

@@ -17,9 +17,25 @@ add_filter('render_block_woocommerce/cart', 'wac_cart_block_free_shipping', 10, 
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
 function wac_free_shipping_threshold() {
     $manual = (float) str_replace(',', '.', (string) wac_option('free_shipping_amount'));
-    if ( $manual > 0 ) {
-        return $manual;
-    }
+    $threshold = ( $manual > 0 ) ? $manual : wac_free_shipping_zone_minimum();
+
+    /**
+     * Filters the order amount that gives free shipping, as the bars show it (the side cart,
+     * the Mini-Cart, the Cart page and the Cart block). 0 hides the free shipping bar.
+     * A multi-currency shop can convert it to the shopper's currency here.
+     *
+     * @since 1.5.2
+     *
+     * @param float $threshold The amount: the "Order amount for free shipping" setting, or the
+     *                         minimum of the free shipping method of the shopper's shipping zone.
+     */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO
+    return (float) apply_filters('wac_free_shipping_threshold', $threshold);
+}
+
+// The minimum order of the free shipping method in the shopper's shipping zone, 0 when there is none.
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO
+function wac_free_shipping_zone_minimum() {
     if ( !function_exists('WC') || !WC()->cart || !class_exists('WC_Shipping_Zones') ) {
         return 0;
     }
@@ -104,14 +120,16 @@ function wac_free_shipping_enqueue() {
     $dir = plugin_dir_path(WAC_BASE_FILE);
     $base = plugin_basename(WAC_BASE_FILE);
 
-    // Registered always: another bar (the PRO's rewards) is drawn with the same styles.
+    // Registered always: another bar (the PRO's rewards) is drawn with the same styles, and reads
+    // the Cart block's totals with the same script.
     wp_register_style('wac-free-shipping', plugins_url('assets/wac-free-shipping.css', $base), array('wooajaxcart'), (string) filemtime($dir . 'assets/wac-free-shipping.css'));
+    wp_register_script('wac-cart-block-totals', plugins_url('assets/wac-cart-block-totals.js', $base), array('wp-data'), (string) filemtime($dir . 'assets/wac-cart-block-totals.js'), true);
     if ( wac_option('free_shipping_bar') == 'yes' ) {
         wp_enqueue_style('wac-free-shipping');
     }
 
     if ( is_cart() && has_block('woocommerce/cart') && wac_free_shipping_block_enabled() ) {
-        wp_enqueue_script('wac-free-shipping-block', plugins_url('assets/wac-free-shipping-block.js', $base), array('wp-data'), (string) filemtime($dir . 'assets/wac-free-shipping-block.js'), true);
+        wp_enqueue_script('wac-free-shipping-block', plugins_url('assets/wac-free-shipping-block.js', $base), array('wp-data', 'wac-cart-block-totals'), (string) filemtime($dir . 'assets/wac-free-shipping-block.js'), true);
         wp_localize_script('wac-free-shipping-block', 'wac_free_shipping', array(
             'threshold' => wac_free_shipping_threshold(),
             'incl_tax' => ( function_exists('WC') && WC()->cart && WC()->cart->display_prices_including_tax() ) ? 'yes' : 'no',
