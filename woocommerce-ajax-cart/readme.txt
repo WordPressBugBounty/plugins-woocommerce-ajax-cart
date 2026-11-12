@@ -3,7 +3,7 @@ Contributors: moiseh
 Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.5.2
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ No other hacks, code or theme changes are needed: the features are active as soo
 
 You can try and play with this plugin demonstration [clicking here](https://tastewp.com/new?pre-installed-plugin-slug=woocommerce%2Cwoocommerce-ajax-cart&redirect=plugins.php&ni=true)
 
-[youtube https://www.youtube.com/watch?v=UXX8h4ClMy4]
+[youtube https://www.youtube.com/watch?v=zDqIakWksak]
 
 Free version features:
 
@@ -50,7 +50,7 @@ Premium version features:
 
 Get the PRO version [here](https://gum.co/wajaxcart).
 
-[youtube https://www.youtube.com/watch?v=a7MG9YykSfg]
+[youtube https://www.youtube.com/watch?v=fAP6Jphtrdw]
 
 If you looking for a related plugin with more complete features maybe you can try [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability) plugin.
 
@@ -87,6 +87,9 @@ Yes, with WordPress hooks (filters and actions) and JavaScript events, in a chil
 5. The side cart settings: drawer or popup, coupon form, accent colour, the floating button's icon and corner, and the texts.
 
 == Changelog ==
+
+= 1.5.4 =
+* Changed: a tidier settings page — a long setting's label sits on its own line over its field (it ran to four lines in the label column), and a group with one long label shows all its labels that way
 
 = 1.5.2 =
 * Developers: new hooks — `wac_side_cart_enabled` (the side cart on or off on a page), `wac_free_shipping_threshold` (the free shipping amount, for example in the shopper's currency), more arguments on `wac_quantity_div` and `wac_button_link`, and the JavaScript event `wac_before_cart_update`; every hook is listed in the FAQ (2026-11-03)

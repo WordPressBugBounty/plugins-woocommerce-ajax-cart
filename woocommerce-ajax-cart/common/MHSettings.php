@@ -3,6 +3,9 @@ defined('ABSPATH') || exit;
 
 if ( !class_exists('WAC_MHSettings') ) {
     class WAC_MHSettings {
+
+        /** A field label longer than this puts its group's labels over their fields (group_stacked()). */
+        const STACKED_LABEL_CHARS = 44;
         private $pluginAlias;
         private $pluginTitle;
         private $pluginAbbrev;
@@ -261,10 +264,11 @@ if ( !class_exists('WAC_MHSettings') ) {
 
             ?>
             <?php $this->form_header() ?>
+            <?php $stacked = $this->group_stacked( array_filter( $settings, function( $conf ) use ( $settings ) { return empty($conf['depends_on']) || !isset($settings[$conf['depends_on']]); } ) ); ?>
             <div class="mh-card">
             <?php foreach ( $settings as $name => $conf ): ?>
                 <?php if ( empty($conf['depends_on']) ): ?>
-                    <div class="conf conf-<?php echo esc_attr($conf['type']); ?>">
+                    <div class="<?php echo esc_attr( $this->row_class($conf, $stacked) ); ?>">
                         <?php $this->render_field($settings, $name, $conf) ?>
                     </div>
                 <?php endif; ?>
@@ -273,6 +277,34 @@ if ( !class_exists('WAC_MHSettings') ) {
             <?php do_action("mh_{$this->pluginAbbrev}_after_tab", $normalizedTab); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it) ?>
             <?php $this->form_footer() ?>
             <?php
+        }
+
+        /** The fields whose label sits beside (or over) a value: not the switches, chips and PRO rows. */
+        const VALUE_FIELDS = array('text', 'number', 'select', 'multiselect', 'color', 'date');
+
+        /**
+         * Does a group of settings (a tab's card, a sub-options panel) put its value
+         * fields' labels over the fields? When one of them is long: squeezed into the
+         * label column it ran to four lines, and a group half side by side, half
+         * stacked read as two layouts (2026-11-11).
+         */
+        public function group_stacked($confs) {
+            foreach ( $confs as $conf ) {
+                if ( in_array( isset($conf['type']) ? $conf['type'] : '', self::VALUE_FIELDS, true )
+                    && mb_strlen( (string) ( isset($conf['label']) ? $conf['label'] : '' ) ) > self::STACKED_LABEL_CHARS ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /** A setting row's classes: a row of chips is always stacked (its label over the chips). */
+        public function row_class($conf, $stacked = false) {
+            $type = isset($conf['type']) ? $conf['type'] : '';
+            $stack = $type === 'multicheckbox' || ( $stacked && in_array($type, self::VALUE_FIELDS, true) );
+
+            return 'conf conf-' . $type . ( $stack ? ' conf-stacked' : '' );
         }
 
         public function render_field($settings, $name, $conf) {
@@ -338,9 +370,10 @@ if ( !class_exists('WAC_MHSettings') ) {
 
         public function render_dependant_fields($settings, $dependants) {
             ?>
+            <?php $stacked = $this->group_stacked($dependants); ?>
             <div class="mh-subconf">
                 <?php foreach ( $dependants as $name => $conf ): ?>
-                    <div class="conf conf-<?php echo esc_attr($conf['type']); ?>">
+                    <div class="<?php echo esc_attr( $this->row_class($conf, $stacked) ); ?>">
                         <?php $this->render_field($settings, $name, $conf); ?>
                     </div>
                 <?php endforeach; ?>

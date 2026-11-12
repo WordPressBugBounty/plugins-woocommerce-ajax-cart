@@ -154,6 +154,17 @@
     border-bottom: 0;
 }
 
+/* A multicheckbox's sub-options, under its chips */
+.mh-settings-page .conf-multicheckbox > .mh-subconf {
+    grid-column: 2;
+    margin: 12px 0 0;
+}
+
+/* "Classic-only settings are hidden" (block-based Cart/Checkout) */
+.mh-settings-page .mh-classic-only-note {
+    margin: 16px 0 0;
+}
+
 /* Several choices: chips */
 .mh-chips {
     display: flex;
@@ -181,6 +192,27 @@
     border-color: var(--wp-admin-theme-color, #2271b1);
     background: #f0f6fc;
     color: var(--wp-admin-theme-color, #2271b1);
+}
+
+/* A row of chips, and the value fields of a group where one label is long: the
+   label on its own line, the field under it (MHSettings::group_stacked() — squeezed
+   into the label column, a long label ran to four lines) */
+.mh-settings-page .conf.conf-stacked {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 10px;
+}
+
+.mh-settings-page .conf-stacked > .mh-label {
+    line-height: 1.4;
+}
+
+/* a row of chips reads as a sentence, like a switch's */
+.mh-settings-page .conf-multicheckbox.conf-stacked > .mh-label {
+    font-weight: 400;
+}
+
+.mh-settings-page .conf-multicheckbox.conf-stacked > .mh-subconf {
+    grid-column: 1;
 }
 
 /* Save / reset */
@@ -214,6 +246,10 @@
 
     .mh-subconf {
         margin-left: 0;
+    }
+
+    .mh-settings-page .conf-multicheckbox > .mh-subconf {
+        grid-column: 1;
     }
 }
 
