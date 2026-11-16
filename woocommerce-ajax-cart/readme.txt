@@ -3,7 +3,7 @@ Contributors: moiseh
 Tags: woocommerce, ajax, cart, side cart, quantity
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,9 @@ Yes, with WordPress hooks (filters and actions) and JavaScript events, in a chil
 5. The side cart settings: drawer or popup, coupon form, accent colour, the floating button's icon and corner, and the texts.
 
 == Changelog ==
+
+= 1.5.5 =
+* Tested with WooCommerce 11.3 and WordPress 7.1
 
 = 1.5.4 =
 * Changed: a tidier settings page — a long setting's label sits on its own line over its field (it ran to four lines in the label column), and a group with one long label shows all its labels that way

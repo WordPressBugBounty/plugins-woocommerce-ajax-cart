@@ -3,7 +3,7 @@
 Plugin Name: Ajax Cart for WooCommerce
 Plugin URI: https://wordpress.org/plugins/woocommerce-ajax-cart/
 Description: Updates the WooCommerce cart with AJAX as soon as a quantity changes — no "Update cart" click needed
-Version: 1.5.4
+Version: 1.5.5
 Author: Moises Heberle
 Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
@@ -12,7 +12,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires Plugins: woocommerce
 WC requires at least: 3.2
-WC tested up to: 11.2
+WC tested up to: 11.3
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
