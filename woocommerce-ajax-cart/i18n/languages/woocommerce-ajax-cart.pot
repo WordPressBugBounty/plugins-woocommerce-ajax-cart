@@ -2,32 +2,31 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Ajax Cart for WooCommerce 1.5.5\n"
+"Project-Id-Version: Ajax Cart for WooCommerce – Side Cart, Free Shipping Bar & Quantity Buttons 1.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-ajax-cart\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-16T16:59:59+00:00\n"
+"POT-Creation-Date: 2026-11-20T16:52:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woocommerce-ajax-cart\n"
 
 #. Plugin Name of the plugin
 #: wooajaxcart.php
-#: wooajaxcart.php:51
-msgid "Ajax Cart for WooCommerce"
+msgid "Ajax Cart for WooCommerce – Side Cart, Free Shipping Bar & Quantity Buttons"
 msgstr ""
 
 #. Plugin URI of the plugin
 #: wooajaxcart.php
-msgid "https://wordpress.org/plugins/woocommerce-ajax-cart/"
+msgid "https://mhtec.org/plugins/woocommerce-ajax-cart?utm_source=wp-admin&utm_medium=plugin&utm_content=plugin-uri"
 msgstr ""
 
 #. Description of the plugin
 #: wooajaxcart.php
-msgid "Updates the WooCommerce cart with AJAX as soon as a quantity changes — no \"Update cart\" click needed"
+msgid "A side cart that slides in when a product is added, a free shipping bar, and a classic cart that updates with AJAX as soon as a quantity changes — no \"Update cart\" click needed"
 msgstr ""
 
 #. Author of the plugin
@@ -59,50 +58,87 @@ msgid "Settings"
 msgstr ""
 
 #: common/MHSettings.php:201
-#: common/MHSettings.php:439
+#: common/MHSettings.php:449
 msgid "Save settings"
 msgstr ""
 
 #: common/MHSettings.php:204
-#: common/MHSettings.php:442
+#: common/MHSettings.php:452
 msgid "Reset all settings"
 msgstr ""
 
-#: common/MHSettings.php:234
+#: common/MHSettings.php:236
 msgid "Get PRO"
 msgstr ""
 
-#: common/MHSettings.php:443
+#: common/MHSettings.php:453
 msgid "Are you sure?"
 msgstr ""
 
-#. translators: %s: the plugin's review page
-#: common/MHSettings.php:454
+#. translators: 1: the plugin's name, 2: the plugin's review page on WordPress.org
+#: common/MHSettings.php:464
 #, php-format
-msgid "If you liked this plugin, please help us <a href=\"%s\" target=\"_blank\">giving a 5-star rate</a> on WordPress.org :)"
+msgid "Enjoying %1$s? A short review on WordPress.org helps other store owners find it — <a href=\"%2$s\" target=\"_blank\" rel=\"noopener\">leave a review</a>."
+msgstr ""
+
+#: common/MHSettings.php:503
+msgid "Maybe later"
+msgstr ""
+
+#: common/MHSettings.php:504
+msgid "I already did"
 msgstr ""
 
 #. translators: 1: the plugin's name, 2: the premium tab's address
-#: common/MHSettings.php:475
+#: common/MHSettings.php:559
 #, php-format
 msgid "You're using a limited version of %1$s. For more features and better support, please <a href=\"%2$s\">consider the premium version</a>."
 msgstr ""
 
-#: common/MHSettings.php:531
+#. translators: %d: number of days
+#: common/MHSettings.php:583
+#, php-format
+msgid "Hide for %d days"
+msgstr ""
+
+#: common/MHSettings.php:619
 msgid "Watch the demonstration video on YouTube"
 msgstr ""
 
-#: common/MHSettings.php:533
+#: common/MHSettings.php:621
+#: common/MHSettings.php:709
 msgid "Watch demo"
 msgstr ""
 
-#: common/MHSettings.php:576
-#: common/MHSettings.php:585
+#: common/MHSettings.php:675
+#: common/MHSettings.php:694
 msgid "Buy on Gumroad"
 msgstr ""
 
-#: common/MHSettings.php:579
+#. translators: %s: the PRO's price, with its currency
+#: common/MHSettings.php:682
+#, php-format
+msgid "%s one-time payment — no subscription"
+msgstr ""
+
+#: common/MHSettings.php:684
+msgid "1 year of updates and priority support"
+msgstr ""
+
+#: common/MHSettings.php:685
+msgid "7-day money-back guarantee"
+msgstr ""
+
+#: common/MHSettings.php:686
+msgid "Bought by 200+ stores"
+msgstr ""
+
+#: common/MHSettings.php:688
 msgid "Features included in PRO version"
+msgstr ""
+
+#: common/MHSettings.php:707
+msgid "A PRO feature — see what the PRO adds"
 msgstr ""
 
 #. translators: %s: the amount still to spend, with its currency
@@ -117,51 +153,76 @@ msgstr ""
 msgid "You have free shipping!"
 msgstr ""
 
+#: includes/getting-started.php:69
+msgid "Your side cart is on: it slides in when a product is added, with a coupon form and a free shipping bar. Pick its look — drawer or popup, accent colour, icon and texts — in the settings."
+msgstr ""
+
+#: includes/getting-started.php:70
+msgid "Customize the side cart"
+msgstr ""
+
+#: includes/getting-started.php:73
+msgid "New: a side cart that slides in when a product is added — with a coupon form, a free shipping bar and your own colours. It works on classic and block themes; turn it on in the settings."
+msgstr ""
+
+#: includes/getting-started.php:74
+msgid "Turn on the side cart"
+msgstr ""
+
+#: includes/getting-started.php:79
+#: wooajaxcart.php:59
+msgid "Ajax Cart for WooCommerce"
+msgstr ""
+
+#: includes/getting-started.php:82
+msgid "Dismiss"
+msgstr ""
+
 #: includes/side-cart.php:101
 msgid "Your cart"
 msgstr ""
 
-#: includes/side-cart.php:114
+#: includes/side-cart.php:119
 msgid "Open the cart"
 msgstr ""
 
-#: includes/side-cart.php:122
-#: wooajaxcart.php:143
+#: includes/side-cart.php:127
+#: wooajaxcart.php:165
 msgid "Cart"
 msgstr ""
 
-#: includes/side-cart.php:125
+#: includes/side-cart.php:130
 msgid "Close the cart"
 msgstr ""
 
-#: includes/side-cart.php:160
+#: includes/side-cart.php:165
 msgid "Coupon code"
 msgstr ""
 
-#: includes/side-cart.php:161
+#: includes/side-cart.php:166
 msgid "Apply"
 msgstr ""
 
-#: includes/side-cart.php:171
+#: includes/side-cart.php:176
 msgid "Applied"
 msgstr ""
 
 #. translators: %s: the coupon code
-#: includes/side-cart.php:173
+#: includes/side-cart.php:178
 #, php-format
 msgid "Remove the coupon %s"
 msgstr ""
 
 #. translators: %s: the coupon code
-#: includes/side-cart.php:173
+#: includes/side-cart.php:178
 msgid "Remove"
 msgstr ""
 
-#: includes/side-cart.php:177
+#: includes/side-cart.php:182
 msgid "After discounts"
 msgstr ""
 
-#: includes/side-cart.php:223
+#: includes/side-cart.php:230
 msgid "The coupon could not be applied. Please reload the page and try again."
 msgstr ""
 
@@ -181,138 +242,175 @@ msgctxt "Product quantity input tooltip"
 msgid "Qty"
 msgstr ""
 
-#: wooajaxcart.php:68
+#: wooajaxcart.php:76
 msgid "Display -/+ buttons around product quantity input"
 msgstr ""
 
-#: wooajaxcart.php:69
-#: wooajaxcart.php:75
-#: wooajaxcart.php:81
-#: wooajaxcart.php:90
-#: wooajaxcart.php:195
+#: wooajaxcart.php:77
+#: wooajaxcart.php:83
+#: wooajaxcart.php:89
+#: wooajaxcart.php:98
+#: wooajaxcart.php:217
+#: wooajaxcart.php:238
 msgid "General"
 msgstr ""
 
-#: wooajaxcart.php:74
-msgid "Show item quantity as select instead numeric field"
+#: wooajaxcart.php:82
+msgid "Show the item quantity as a dropdown instead of a number field"
 msgstr ""
 
-#: wooajaxcart.php:80
+#: wooajaxcart.php:88
 msgid "Items to show on select"
 msgstr ""
 
-#: wooajaxcart.php:89
-msgid "Show user confirmation when change item quantity to zero or empty"
+#: wooajaxcart.php:97
+msgid "Ask the shopper to confirm before an item is removed (its quantity set to zero or emptied)"
 msgstr ""
 
-#: wooajaxcart.php:95
+#: wooajaxcart.php:103
 msgid "Enable the side cart: a cart that slides in from the side (or opens as a popup), on every page but the cart and checkout"
 msgstr ""
 
-#: wooajaxcart.php:96
-#: wooajaxcart.php:102
-#: wooajaxcart.php:109
-#: wooajaxcart.php:116
-#: wooajaxcart.php:123
-#: wooajaxcart.php:133
-#: wooajaxcart.php:139
-#: wooajaxcart.php:151
+#: wooajaxcart.php:104
+#: wooajaxcart.php:110
+#: wooajaxcart.php:117
+#: wooajaxcart.php:124
+#: wooajaxcart.php:131
+#: wooajaxcart.php:138
+#: wooajaxcart.php:145
+#: wooajaxcart.php:155
 #: wooajaxcart.php:161
-#: wooajaxcart.php:168
-#: wooajaxcart.php:175
+#: wooajaxcart.php:173
+#: wooajaxcart.php:183
+#: wooajaxcart.php:190
+#: wooajaxcart.php:197
+#: wooajaxcart.php:239
 msgid "Side cart"
 msgstr ""
 
-#: wooajaxcart.php:101
+#: wooajaxcart.php:109
 msgid "Open the side cart when a product is added to the cart"
 msgstr ""
 
-#: wooajaxcart.php:108
+#: wooajaxcart.php:116
 msgid "Show a floating cart button with the item count"
 msgstr ""
 
-#: wooajaxcart.php:115
+#: wooajaxcart.php:123
+msgid "Open the side cart from the theme's cart links and icons (the header cart) instead of going to the cart page"
+msgstr ""
+
+#: wooajaxcart.php:130
+msgid "Hide the floating cart button while the cart is empty"
+msgstr ""
+
+#: wooajaxcart.php:137
 msgid "Show a coupon form in the side cart (when coupons are enabled in WooCommerce)"
 msgstr ""
 
-#: wooajaxcart.php:122
+#: wooajaxcart.php:144
 msgid "Side cart style: a drawer that slides in from the side, or a popup in the middle of the screen"
 msgstr ""
 
-#: wooajaxcart.php:127
+#: wooajaxcart.php:149
 msgid "Drawer"
 msgstr ""
 
-#: wooajaxcart.php:128
+#: wooajaxcart.php:150
 msgid "Popup"
 msgstr ""
 
-#: wooajaxcart.php:132
+#: wooajaxcart.php:154
 msgid "Accent colour (floating button, checkout button, progress bar) — empty: the default colours"
 msgstr ""
 
-#: wooajaxcart.php:138
+#: wooajaxcart.php:160
 msgid "Floating button icon"
 msgstr ""
 
-#: wooajaxcart.php:144
+#: wooajaxcart.php:166
 msgid "Cart (outline)"
 msgstr ""
 
-#: wooajaxcart.php:145
+#: wooajaxcart.php:167
 msgid "Shopping bag"
 msgstr ""
 
-#: wooajaxcart.php:146
+#: wooajaxcart.php:168
 msgid "Basket"
 msgstr ""
 
-#: wooajaxcart.php:150
+#: wooajaxcart.php:172
 msgid "Floating button position"
 msgstr ""
 
-#: wooajaxcart.php:155
+#: wooajaxcart.php:177
 msgid "Bottom right"
 msgstr ""
 
-#: wooajaxcart.php:156
+#: wooajaxcart.php:178
 msgid "Bottom left"
 msgstr ""
 
-#: wooajaxcart.php:160
+#: wooajaxcart.php:182
 msgid "Side cart title (empty: \"Your cart\")"
 msgstr ""
 
-#: wooajaxcart.php:167
+#: wooajaxcart.php:189
 msgid "Checkout button text (empty: WooCommerce's \"Checkout\")"
 msgstr ""
 
-#: wooajaxcart.php:174
+#: wooajaxcart.php:196
 msgid "Empty cart text (empty: WooCommerce's \"No products in the cart.\")"
 msgstr ""
 
-#: wooajaxcart.php:181
+#: wooajaxcart.php:203
 msgid "Show a free shipping progress bar in the side cart, Mini-Cart, Cart page and Cart block"
 msgstr ""
 
-#: wooajaxcart.php:182
-#: wooajaxcart.php:188
+#: wooajaxcart.php:204
+#: wooajaxcart.php:210
+#: wooajaxcart.php:274
 msgid "Free shipping bar"
 msgstr ""
 
-#: wooajaxcart.php:187
+#: wooajaxcart.php:209
 msgid "Order amount for free shipping (empty: read from the free shipping method of the shopper's shipping zone)"
 msgstr ""
 
-#: wooajaxcart.php:194
-msgid "AJAX timeout in milliseconds to refresh the cart on change"
+#: wooajaxcart.php:216
+msgid "Wait this long (milliseconds) after a quantity changes before the cart is updated"
 msgstr ""
 
-#: wooajaxcart.php:254
-#: wooajaxcart.php:264
+#: wooajaxcart.php:243
+msgid "AJAX Add to cart on product pages — no page reload"
+msgstr ""
+
+#: wooajaxcart.php:249
+msgid "Quantity -/+ buttons on the Shop and in the Mini-Cart, kept in sync with the cart"
+msgstr ""
+
+#: wooajaxcart.php:255
+msgid "Live price on product pages: the price follows the quantity chosen"
+msgstr ""
+
+#: wooajaxcart.php:261
+msgid "Change quantities with -/+ buttons inside the side cart"
+msgstr ""
+
+#: wooajaxcart.php:267
+msgid "Product suggestions in the side cart: cross-sells and upsells with an \"Add\" button"
+msgstr ""
+
+#: wooajaxcart.php:273
+msgid "Rewards progress bar: your own milestones (\"$50: free gift\", \"$100: 10% off\") on the way to bigger orders"
+msgstr ""
+
+#: wooajaxcart.php:363
+#: wooajaxcart.php:394
 msgid "Are you sure you want to remove this item from cart?"
 msgstr ""
 
-#: wooajaxcart.php:263
+#: wooajaxcart.php:393
 msgid "Updating..."
 msgstr ""

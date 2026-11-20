@@ -427,3 +427,86 @@ a.mh-feature-video:focus {
     border-radius: 6px;
     font-family: Consolas, Monaco, monospace;
 }
+
+/* Ajax Cart's PRO settings shown locked in the free plugin: a dimmed switch, the PRO badge and the demo video. */
+.mh-settings-page .conf-pro_locked {
+    display: block;
+}
+
+label.wac-pro-locked {
+    cursor: default;
+}
+
+label.wac-pro-locked > span {
+    opacity: .6;
+}
+
+.mh-settings-page label.wac-pro-locked input.mh-switch[type=checkbox] {
+    opacity: .5;
+    pointer-events: none;
+    cursor: default;
+}
+
+.wac-pro-badge,
+.wac-pro-demo {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 6px;
+    text-decoration: none;
+    letter-spacing: 0.4px;
+}
+
+.wac-pro-badge {
+    background: #f0a500;
+    color: #fff;
+}
+
+.wac-pro-badge:hover {
+    background: #d4920a;
+    color: #fff;
+}
+
+.wac-pro-demo {
+    background: #fff;
+    color: #c00;
+    border: 1px solid #e5b4b4;
+}
+
+.wac-pro-demo:hover {
+    color: #a00;
+    border-color: #c00;
+}
+
+/* The Get PRO tab: price, updates, refund. */
+.wac-buy-facts {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.wac-buy-facts li {
+    margin: 0;
+    padding-left: 18px;
+    position: relative;
+}
+
+.wac-buy-facts li::before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    color: #46b450;
+    font-weight: 700;
+}
+
+.mh-notice-hide {
+    margin-left: 8px;
+    font-size: 12px;
+}

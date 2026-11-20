@@ -211,6 +211,7 @@ if ( !class_exists('WAC_MHSettings') ) {
                 }
             }
             
+            $this->handle_notice_links();
             $this->enqueue_admin_scripts();
 
             $title = $this->common->getPluginTitle();
@@ -221,6 +222,7 @@ if ( !class_exists('WAC_MHSettings') ) {
                 <h1 class="mh-settings-title">
                     <?php echo esc_html($title); ?>
                 </h1>
+                <?php $this->review_box(); ?>
                 <?php if ( $displayPremiumTab ): ?>
                     <?php $this->premium_alert_box(); ?>
                 <?php endif; ?>
@@ -353,6 +355,10 @@ if ( !class_exists('WAC_MHSettings') ) {
                 case 'date':
                     $this->date($name, $conf['label']);
                     break;
+
+                case 'pro_locked':
+                    $this->pro_locked($name, $conf['label'], isset($conf['demo']) ? $conf['demo'] : '');
+                    break;
             }
         }
 
@@ -398,6 +404,10 @@ if ( !class_exists('WAC_MHSettings') ) {
             $arr = array();
 
             foreach ( $arrSettings as $key => $conf ) {
+                // A PRO setting shown locked in the free plugin is never saved.
+                if ( isset($conf['type']) && $conf['type'] === 'pro_locked' ) {
+                    continue;
+                }
                 $arr[ $key ] = $conf['default'];
             }
     
@@ -450,19 +460,93 @@ if ( !class_exists('WAC_MHSettings') ) {
             $pluginUrl = 'https://wordpress.org/support/plugin/' . $this->pluginAlias . '/reviews/#new-post';
 
             $text = sprintf(
-                /* translators: %s: the plugin's review page */
-                __('If you liked this plugin, please help us <a href="%s" target="_blank">giving a 5-star rate</a> on WordPress.org :)', 'woocommerce-ajax-cart'), $pluginUrl);
+                /* translators: 1: the plugin's name, 2: the plugin's review page on WordPress.org */
+                __('Enjoying %1$s? A short review on WordPress.org helps other store owners find it — <a href="%2$s" target="_blank" rel="noopener">leave a review</a>.', 'woocommerce-ajax-cart'), esc_html($this->pluginTitle), $pluginUrl);
 
             $text = wp_kses($text, array(
-                'a' => array('href' => array(), 'target' => array())
+                'a' => array('href' => array(), 'target' => array(), 'rel' => array())
             ));
 
             return $text;
         }
 
-        public function get_premium_url() {
+        /** Days after the plugin was first seen before the settings page asks for a review. */
+        const REVIEW_AFTER_DAYS = 14;
+
+        /** How long "Maybe later" puts the review ask off, and how long the PRO notice stays hidden. */
+        const REVIEW_SNOOZE_DAYS = 30;
+        const PREMIUM_NOTICE_SNOOZE_DAYS = 90;
+
+        /**
+         * The review ask: on the plugin's own settings page only, two weeks after it was first seen,
+         * until the user says they reviewed it ("Maybe later" puts it off a month). The free plugin's.
+         */
+        public function show_review_box() {
+            if ( $this->common->isPremiumVersion() || get_option($this->pluginAbbrev . '_review_done') || get_transient($this->pluginAbbrev . '_review_later') ) {
+                return false;
+            }
+
+            $installedAt = (int) get_option($this->pluginAbbrev . '_installed_at', 0);
+
+            return $installedAt > 0 && ( time() - $installedAt ) >= self::REVIEW_AFTER_DAYS * DAY_IN_SECONDS;
+        }
+
+        private function review_box() {
+            if ( ! $this->show_review_box() ) {
+                return;
+            }
+
+            ?>
+            <div class="mh-update-message notice inline notice-info notice-alt mh-review-ask">
+                <p>
+                    <?php echo wp_kses_post($this->get_rate_recommendation()); ?>
+                    <a href="<?php echo esc_url($this->notice_link_url('review', 'later')); ?>"><?php echo esc_html__('Maybe later', 'woocommerce-ajax-cart'); ?></a> ·
+                    <a href="<?php echo esc_url($this->notice_link_url('review', 'done')); ?>"><?php echo esc_html__('I already did', 'woocommerce-ajax-cart'); ?></a>
+                </p>
+            </div>
+            <?php
+        }
+
+        /** A link of the settings page's notices (the review ask, the PRO notice), with its nonce. */
+        private function notice_link_url($notice, $answer) {
+            $url = add_query_arg(array('wac_notice' => $notice, 'wac_answer' => $answer), $this->admin_url_current());
+
+            return wp_nonce_url($url, 'wac_notice_' . $notice);
+        }
+
+        /** "Maybe later" / "I already did" on the review ask, "Hide for 90 days" on the PRO notice. */
+        private function handle_notice_links() {
+            // phpcs:disable WordPress.Security.NonceVerification.Recommended -- the nonce is checked right below, before anything is saved
+            $notice = isset($_GET['wac_notice']) ? sanitize_key(wp_unslash($_GET['wac_notice'])) : '';
+            $answer = isset($_GET['wac_answer']) ? sanitize_key(wp_unslash($_GET['wac_answer'])) : '';
+            $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+            // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+            if ( $notice === '' || ! wp_verify_nonce($nonce, 'wac_notice_' . $notice) ) {
+                return;
+            }
+
+            if ( $notice === 'review' && $answer === 'done' ) {
+                update_option($this->pluginAbbrev . '_review_done', time(), false);
+            }
+            else if ( $notice === 'review' ) {
+                set_transient($this->pluginAbbrev . '_review_later', 1, self::REVIEW_SNOOZE_DAYS * DAY_IN_SECONDS);
+            }
+            else if ( $notice === 'premium' ) {
+                set_transient($this->pluginAbbrev . '_premium_notice_hidden', 1, self::PREMIUM_NOTICE_SNOOZE_DAYS * DAY_IN_SECONDS);
+            }
+        }
+
+        /** The PRO's page, its utm_content naming the place of the link (the Get PRO tab's top or bottom button…). */
+        public function get_premium_url($content = '') {
             // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
-            return apply_filters("mh_{$this->pluginAbbrev}_premium_url", '');
+            $url = (string) apply_filters("mh_{$this->pluginAbbrev}_premium_url", '');
+
+            if ( $url !== '' && $content !== '' ) {
+                $url = add_query_arg('utm_content', sanitize_key($content), $url);
+            }
+
+            return $url;
         }
 
         public function has_premium_features() {
@@ -484,8 +568,9 @@ if ( !class_exists('WAC_MHSettings') ) {
             return $text;
         }
 
+        /** The PRO notice over the settings: this page only, hidden for 90 days by its own link. */
         private function premium_alert_box() {
-            if ( $this->active_tab() != 'tab-buy.php' ) {
+            if ( $this->active_tab() != 'tab-buy.php' && ! get_transient($this->pluginAbbrev . '_premium_notice_hidden') ) {
                 $imgAlert = plugins_url('common/assets/alert.png', $this->pluginBaseFile);
 
                 ?>
@@ -493,6 +578,9 @@ if ( !class_exists('WAC_MHSettings') ) {
                     <p>
                         <img src="<?php echo esc_url($imgAlert); ?>"/>
                         <?php echo wp_kses_post($this->get_premium_notice()); ?>
+                        <a class="mh-notice-hide" href="<?php echo esc_url($this->notice_link_url('premium', 'hide')); ?>"><?php echo esc_html(sprintf(
+                            /* translators: %d: number of days */
+                            __('Hide for %d days', 'woocommerce-ajax-cart'), self::PREMIUM_NOTICE_SNOOZE_DAYS)); ?></a>
                     </p>
                 </div>
                 <?php
@@ -566,22 +654,43 @@ if ( !class_exists('WAC_MHSettings') ) {
             return $options;
         }
 
+        /**
+         * The PRO's price as the readme states it ("$35 one-time"), '' when it states none: the readme
+         * is the one place it is written, and the store's coherence check holds it to Gumroad's price.
+         */
+        public function premium_price() {
+            $readmeFile = plugin_dir_path( $this->pluginBaseFile ) . '/readme.txt';
+            $readme = file_exists($readmeFile) ? (string) file_get_contents($readmeFile) : '';
+
+            return preg_match('/(\$\s?\d+(?:\.\d{2})?)\s+one-time/i', $readme, $m) ? $m[1] : '';
+        }
+
         public function render_buy_tab() {
-            $buyUrl = $this->get_premium_url();
+            $price = $this->premium_price();
             ?>
             <div class="mh-buy-div">
                 <div class="mh-buy-head">
                     <h1 class="mh-buy-title"><?php echo esc_html($this->pluginTitle); ?> <span class="mh-pro-badge">PRO</span></h1>
-                    <a class="button button-primary mh-buy-cta" href="<?php echo esc_url($buyUrl); ?>" target="_blank" rel="noopener">
+                    <a class="button button-primary mh-buy-cta" href="<?php echo esc_url($this->get_premium_url('get-pro-tab-top')); ?>" target="_blank" rel="noopener">
                         <?php echo esc_html__('Buy on Gumroad', 'woocommerce-ajax-cart'); ?> &rarr;
                     </a>
                 </div>
+                <ul class="wac-buy-facts">
+                    <?php if ( $price !== '' ): ?>
+                        <li><strong><?php echo esc_html(sprintf(
+                            /* translators: %s: the PRO's price, with its currency */
+                            __('%s one-time payment — no subscription', 'woocommerce-ajax-cart'), $price)); ?></strong></li>
+                    <?php endif; ?>
+                    <li><?php echo esc_html__('1 year of updates and priority support', 'woocommerce-ajax-cart'); ?></li>
+                    <li><?php echo esc_html__('7-day money-back guarantee', 'woocommerce-ajax-cart'); ?></li>
+                    <li><?php echo esc_html__('Bought by 200+ stores', 'woocommerce-ajax-cart'); ?></li>
+                </ul>
                 <h3 class="mh-buy-subtitle"><?php echo esc_html__('Features included in PRO version', 'woocommerce-ajax-cart'); ?></h3>
                 <ul class="mh-premium-features">
                     <?php $this->render_premium_features(); ?>
                 </ul>
                 <p class="mh-buy-footer">
-                    <a class="button button-primary button-hero mh-buy-cta" href="<?php echo esc_url($buyUrl); ?>" target="_blank" rel="noopener">
+                    <a class="button button-primary button-hero mh-buy-cta" href="<?php echo esc_url($this->get_premium_url('get-pro-tab-bottom')); ?>" target="_blank" rel="noopener">
                         <?php echo esc_html__('Buy on Gumroad', 'woocommerce-ajax-cart'); ?> &rarr;
                     </a>
                 </p>
@@ -589,6 +698,20 @@ if ( !class_exists('WAC_MHSettings') ) {
             <?php
         }
         
+        /** A PRO setting in the free plugin: a dimmed switch, the PRO badge (to the Get PRO tab) and its demo video. */
+        public function pro_locked($name, $label, $demo = '') {
+            ?>
+            <label class="mh-check wac-pro-locked">
+                <input type="checkbox" disabled="disabled" class="mh-switch" />
+                <span><?php echo esc_html($label); ?></span>
+                <a href="<?php echo esc_url($this->tab_premium_url()); ?>" class="wac-pro-badge" title="<?php echo esc_attr__('A PRO feature — see what the PRO adds', 'woocommerce-ajax-cart'); ?>">PRO</a>
+                <?php if ( $demo !== '' ): ?>
+                    <a href="<?php echo esc_url($demo); ?>" class="wac-pro-demo" target="_blank" rel="noopener"><?php echo esc_html__('Watch demo', 'woocommerce-ajax-cart'); ?></a>
+                <?php endif; ?>
+            </label>
+            <?php
+        }
+
         public function checkbox($name, $label, $class = null) {
             $value = $this->get_option($name);
             

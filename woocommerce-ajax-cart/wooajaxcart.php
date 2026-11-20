@@ -1,15 +1,16 @@
 <?php
 /*
-Plugin Name: Ajax Cart for WooCommerce
-Plugin URI: https://wordpress.org/plugins/woocommerce-ajax-cart/
-Description: Updates the WooCommerce cart with AJAX as soon as a quantity changes — no "Update cart" click needed
-Version: 1.5.5
+Plugin Name: Ajax Cart for WooCommerce – Side Cart, Free Shipping Bar & Quantity Buttons
+Plugin URI: https://mhtec.org/plugins/woocommerce-ajax-cart?utm_source=wp-admin&utm_medium=plugin&utm_content=plugin-uri
+Description: A side cart that slides in when a product is added, a free shipping bar, and a classic cart that updates with AJAX as soon as a quantity changes — no "Update cart" click needed
+Version: 1.6.0
 Author: Moises Heberle
 Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
 Domain Path: /i18n/languages/
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Requires PHP: 7.2
 Requires Plugins: woocommerce
 WC requires at least: 3.2
 WC tested up to: 11.3
@@ -30,6 +31,13 @@ if ( !function_exists('wac_init') ) {
 
     include_once plugin_dir_path(__FILE__) . 'includes/side-cart.php';
     include_once plugin_dir_path(__FILE__) . 'includes/free-shipping.php';
+
+    if ( is_admin() ) {
+        include_once plugin_dir_path(__FILE__) . 'includes/getting-started.php';
+    }
+
+    // A fresh install starts with the side cart and the free shipping bar on (an update keeps its settings).
+    register_activation_hook( WAC_BASE_FILE, 'wac_activate' );
 
     add_action( 'before_woocommerce_init', function() {
         if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
@@ -71,7 +79,7 @@ if ( !function_exists('wac_init') ) {
             'default' => 'yes',
         );
         $arr['qty_as_select'] = array(
-            'label' => __('Show item quantity as select instead numeric field', 'woocommerce-ajax-cart'),
+            'label' => __('Show the item quantity as a dropdown instead of a number field', 'woocommerce-ajax-cart'),
             'tab' => __('General', 'woocommerce-ajax-cart'),
             'type' => 'checkbox',
             'default' => 'no',
@@ -86,7 +94,7 @@ if ( !function_exists('wac_init') ) {
             'max' => 1000,
         );
         $arr['confirmation_zero_qty'] = array(
-            'label' => __('Show user confirmation when change item quantity to zero or empty', 'woocommerce-ajax-cart'),
+            'label' => __('Ask the shopper to confirm before an item is removed (its quantity set to zero or emptied)', 'woocommerce-ajax-cart'),
             'tab' => __('General', 'woocommerce-ajax-cart'),
             'type' => 'checkbox',
             'default' => 'no',
@@ -109,6 +117,20 @@ if ( !function_exists('wac_init') ) {
             'tab' => __('Side cart', 'woocommerce-ajax-cart'),
             'type' => 'checkbox',
             'default' => 'yes',
+            'depends_on' => 'side_cart',
+        );
+        $arr['side_cart_open_from_cart_links'] = array(
+            'label' => __('Open the side cart from the theme\'s cart links and icons (the header cart) instead of going to the cart page', 'woocommerce-ajax-cart'),
+            'tab' => __('Side cart', 'woocommerce-ajax-cart'),
+            'type' => 'checkbox',
+            'default' => 'yes',
+            'depends_on' => 'side_cart',
+        );
+        $arr['side_cart_button_hide_empty'] = array(
+            'label' => __('Hide the floating cart button while the cart is empty', 'woocommerce-ajax-cart'),
+            'tab' => __('Side cart', 'woocommerce-ajax-cart'),
+            'type' => 'checkbox',
+            'default' => 'no',
             'depends_on' => 'side_cart',
         );
         $arr['side_cart_coupon'] = array(
@@ -191,20 +213,96 @@ if ( !function_exists('wac_init') ) {
             'depends_on' => 'free_shipping_bar',
         );
         $arr['ajax_timeout'] = array(
-            'label' => __('AJAX timeout in milliseconds to refresh the cart on change', 'woocommerce-ajax-cart'),
+            'label' => __('Wait this long (milliseconds) after a quantity changes before the cart is updated', 'woocommerce-ajax-cart'),
             'tab' => __('General', 'woocommerce-ajax-cart'),
             'type' => 'number',
             'default' => 800,
             'min' => 1,
             'max' => 5000,
         );
-    
+
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- public hook name kept for compatibility (the PRO and other extensions hook into it)
+        if ( ! apply_filters('mh_wac_is_premium', false) ) {
+            $arr += wac_pro_locked_settings();
+        }
+
         return $arr;
     }
-    
+
+    /**
+     * The PRO's settings, shown locked (a dimmed switch with a PRO badge and its demo video) beside
+     * the free ones they extend — never saved. The PRO has the real settings instead.
+     */
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
-    function wac_premium_url() {
-        return 'http://gum.co/wajaxcart';
+    function wac_pro_locked_settings() {
+        $general = __('General', 'woocommerce-ajax-cart');
+        $sideCart = __('Side cart', 'woocommerce-ajax-cart');
+
+        return array(
+            '_pro_ajaxify_add2cart' => array(
+                'label' => __('AJAX Add to cart on product pages — no page reload', 'woocommerce-ajax-cart'),
+                'tab' => $general,
+                'type' => 'pro_locked',
+                'demo' => 'https://youtu.be/-Ko6BZUoDhQ',
+            ),
+            '_pro_qty_shop' => array(
+                'label' => __('Quantity -/+ buttons on the Shop and in the Mini-Cart, kept in sync with the cart', 'woocommerce-ajax-cart'),
+                'tab' => $general,
+                'type' => 'pro_locked',
+                'demo' => 'https://youtu.be/8p_Zu8_rcO8',
+            ),
+            '_pro_live_price' => array(
+                'label' => __('Live price on product pages: the price follows the quantity chosen', 'woocommerce-ajax-cart'),
+                'tab' => $general,
+                'type' => 'pro_locked',
+                'demo' => 'https://youtu.be/9ukJhstrIHc',
+            ),
+            '_pro_side_cart_qty' => array(
+                'label' => __('Change quantities with -/+ buttons inside the side cart', 'woocommerce-ajax-cart'),
+                'tab' => $sideCart,
+                'type' => 'pro_locked',
+                'demo' => 'https://youtu.be/nl5G8h2ppiA',
+            ),
+            '_pro_side_cart_suggestions' => array(
+                'label' => __('Product suggestions in the side cart: cross-sells and upsells with an "Add" button', 'woocommerce-ajax-cart'),
+                'tab' => $sideCart,
+                'type' => 'pro_locked',
+                'demo' => 'https://youtu.be/NgZjkvj98rg',
+            ),
+            '_pro_rewards_bar' => array(
+                'label' => __('Rewards progress bar: your own milestones ("$50: free gift", "$100: 10% off") on the way to bigger orders', 'woocommerce-ajax-cart'),
+                'tab' => __('Free shipping bar', 'woocommerce-ajax-cart'),
+                'type' => 'pro_locked',
+                'demo' => 'https://youtu.be/VZEhx2PCi1Y',
+            ),
+        );
+    }
+
+    /**
+     * The PRO's page on Gumroad, tagged with where the click came from (utm_content: the Get PRO
+     * tab's buttons, a locked setting…) so the store's traffic report tells the places apart.
+     */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
+    function wac_premium_url( $url = '', $content = 'wp-admin' ) {
+        return add_query_arg( array(
+            'utm_source' => 'wp-admin',
+            'utm_medium' => 'plugin',
+            'utm_campaign' => 'woocommerce-ajax-cart',
+            'utm_content' => sanitize_key( (string) $content ),
+        ), 'https://moiseh.gumroad.com/l/wajaxcart' );
+    }
+
+    /** First activation of a fresh install: the side cart and the free shipping bar on (it hides itself without a free shipping amount). */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
+    function wac_activate() {
+        if ( get_option('wac_settings', false) === false ) {
+            add_option('wac_settings', array('side_cart' => 'yes', 'free_shipping_bar' => 'yes'));
+            add_option('wac_fresh_install', time());
+        }
+
+        if ( get_option('wac_installed_at', false) === false ) {
+            add_option('wac_installed_at', time());
+        }
     }
     
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
@@ -226,13 +324,11 @@ if ( !function_exists('wac_init') ) {
             $deps[] = 'wc-cart';
         }
 
-        // Versioned by the file's own date, so a new release never meets a cached copy.
+        // Versioned by the file's own date, so a new release never meets a cached copy. Registered on every
+        // page: the free shipping bar's styles (in the Mini-Cart of any page) build on these.
         $dir = plugin_dir_path(WAC_BASE_FILE);
-        wp_enqueue_style('wooajaxcart', plugins_url('assets/wooajaxcart.css', plugin_basename(WAC_BASE_FILE)), array(), (string) filemtime($dir . 'assets/wooajaxcart.css'));
-        wp_enqueue_script('wooajaxcart', plugins_url('assets/wooajaxcart.js', plugin_basename(WAC_BASE_FILE)), $deps, (string) filemtime($dir . 'assets/wooajaxcart.js'), false);
-    
-        $frontendData = wac_frontend_vars();
-        wp_localize_script( 'wooajaxcart', 'wooajaxcart', $frontendData );
+        wp_register_style('wooajaxcart', plugins_url('assets/wooajaxcart.css', plugin_basename(WAC_BASE_FILE)), array(), (string) filemtime($dir . 'assets/wooajaxcart.css'));
+        wp_register_script('wooajaxcart', plugins_url('assets/wooajaxcart.js', plugin_basename(WAC_BASE_FILE)), $deps, (string) filemtime($dir . 'assets/wooajaxcart.js'), false);
 
         // The accent colour of the side cart and the progress bars (once: this also runs before the cart table).
         static $accented = false;
@@ -242,6 +338,19 @@ if ( !function_exists('wac_init') ) {
         }
 
         wac_free_shipping_enqueue();
+
+        if ( ! wac_load_assets() ) {
+            return;
+        }
+
+        wp_enqueue_style('wooajaxcart');
+        wp_enqueue_script('wooajaxcart');
+
+        static $localized = false;
+        if ( ! $localized ) {
+            $localized = true;
+            wp_localize_script( 'wooajaxcart', 'wooajaxcart', wac_frontend_vars() );
+        }
 
         if ( wac_side_cart_enabled() ) {
             wac_side_cart_enqueue();
@@ -254,6 +363,27 @@ if ( !function_exists('wac_init') ) {
                 'warn_remove_text' => __( 'Are you sure you want to remove this item from cart?', 'woocommerce-ajax-cart' ),
             ));
         }
+    }
+
+    /**
+     * Whether this page needs the cart script and styles: the Cart page (its -/+ buttons and AJAX
+     * totals, or the Cart block's confirmation), a page with the side cart, or a classic cart
+     * printed by its shortcode elsewhere. Not a blog post or a page without any of them.
+     */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
+    function wac_load_assets() {
+        $load = is_cart() || doing_action('woocommerce_before_cart_table') || wac_side_cart_enabled();
+
+        /**
+         * Filters whether the plugin's cart script and styles load on the current page (the PRO
+         * loads them on every store page: its quantities live on the shop, product and Mini-Cart).
+         *
+         * @since 1.6.0
+         *
+         * @param bool $load True on the Cart page, a page with the classic cart or the side cart.
+         */
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO
+        return (bool) apply_filters('wac_load_assets', $load);
     }
 
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
@@ -276,16 +406,23 @@ if ( !function_exists('wac_init') ) {
             return $inputDiv;
         }
     
-        // avoid duplication issue some users related
-        if ( preg_match('/wac-qty-button/', $inputDiv) ) {
+        // Ours already there, or the theme draws its own -/+ (Woodmart, Flatsome, Astra…: `plus` / `minus`
+        // buttons, a `buttons_added` wrapper): a second pair would sit beside them.
+        if ( wac_has_own_qty_buttons($inputDiv) ) {
             return $inputDiv;
         }
     
         // add plus and minus buttons
         $minus = wac_button_link('-', 'sub');
         $plus = wac_button_link('+', 'inc');
-    
-        $input = str_replace(array('<div class="quantity">', '</div>'), array('', ''), $inputDiv);
+
+        // Only WooCommerce's own wrapper comes off (`<div class="quantity">…</div>`, whatever its classes):
+        // the field's other markup keeps its tags — every </div> was taken out before, leaving any inner
+        // <div> of a theme's template unclosed.
+        $input = $inputDiv;
+        if ( preg_match('#^\s*<div\b[^>]*\bclass=["\'][^"\']*\bquantity\b[^"\']*["\'][^>]*>(.*)</div>\s*$#is', $inputDiv, $wrapped) ) {
+            $input = $wrapped[1];
+        }
         $newDiv = '<div class="quantity wac-quantity">' . $minus . $input . $plus . '</div>';
 
         /**
@@ -302,6 +439,12 @@ if ( !function_exists('wac_init') ) {
         return apply_filters('wac_quantity_div', $newDiv, $cart_item_key, $cart_item, $inputDiv);
     }
     
+    /** Whether a quantity field's HTML already has -/+ buttons: ours, or a theme's. */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
+    function wac_has_own_qty_buttons($html) {
+        return (bool) preg_match('/wac-qty-button|buttons_added|class=["\'][^"\']*\b(?:plus|minus)\b/i', (string) $html);
+    }
+
     // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- wac_ is this plugin's prefix, the same in the free plugin and its PRO; the name is kept for the code and extensions that call it
     function wac_button_link($label, $identifier) {
         $html  = '<a href="" class="wac-qty-button wac-btn-'.$identifier.'">';

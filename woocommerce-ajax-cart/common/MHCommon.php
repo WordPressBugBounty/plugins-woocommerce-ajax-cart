@@ -90,10 +90,11 @@ if ( !class_exists('WAC_MHCommon') ) {
             include_once( dirname(__FILE__) . '/MHSettings.php' );
             $settings = $common->settingsObj = new WAC_MHSettings($pluginAlias, $pluginAbbrev, $pluginTitle, $pluginBaseFile, $common);
 
-            $noticeObject = $common->getNotice();
-
             if ( $common->isPremiumVersion() ) {
                 if ( file_exists(dirname(__FILE__) . '/MHSupport.php') ) {
+                    // The update check runs from WordPress's cron too, not only in the admin.
+                    $noticeObject = $common->getNotice();
+
                     include_once( dirname(__FILE__) . '/MHSupport.php' );
                     new WAC_MHSupport($pluginAlias, $pluginTitle, $pluginBaseFile, $pluginAbbrev);
     
@@ -101,9 +102,10 @@ if ( !class_exists('WAC_MHCommon') ) {
                     new WAC_MHUpgrader($pluginAlias, $pluginBaseFile, $pluginTitle, $pluginAbbrev, $noticeObject);
                 }
             }
-            else if ( $settings->has_premium_features() ) {
-                $text = $settings->get_premium_notice();
-                $noticeObject->addNotice(self::PREMIUM_ADV_NOTICE, 'success', $text, 0);
+            else if ( is_admin() ) {
+                // The PRO is offered on the plugin's own settings page now (hidden 90 days by its link),
+                // no longer on every Plugins screen: the notice stored by older versions goes.
+                $common->getNotice()->removeNotice(self::PREMIUM_ADV_NOTICE);
             }
         }
     }

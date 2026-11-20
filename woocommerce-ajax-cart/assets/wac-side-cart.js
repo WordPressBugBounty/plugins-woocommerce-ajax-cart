@@ -31,8 +31,45 @@ jQuery(function($){
     $panel.on('click', '.wac-side-cart-close', close);
     $(document).on('keyup', function(e){ if ( e.key === 'Escape' && $panel.hasClass('wac-open') ) { close(); } });
 
-    // Any link pointing at the cart opens the drawer instead, for the theme's own cart icons too.
+    // A `.wac-open-side-cart` element opens the drawer; so does any link to the cart page — the theme's
+    // own header cart and its icons — unless that is turned off. Not the side cart's own "View cart",
+    // the "View cart" link after an AJAX add, nor a click that opens a new tab.
     $(document).on('click', '.wac-open-side-cart', function(e){ e.preventDefault(); open(); });
+
+    var cartPath = function(url) {
+        try {
+            var link = new URL(url, window.location.href);
+            return link.origin + link.pathname.replace(/\/+$/, '');
+        } catch (err) {
+            return null;
+        }
+    };
+    var cartUrl = vars.cart_url ? cartPath(vars.cart_url) : null;
+
+    if ( cartUrl && vars.open_from_cart_links === 'yes' ) {
+        $(document).on('click', 'a[href]', function(e){
+            var $link = $(this);
+            if ( e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.which === 2 || $link.attr('target') === '_blank' ) {
+                return;
+            }
+            if ( $link.closest('#wac-side-cart, .woocommerce-mini-cart__buttons, .woocommerce-message, .woocommerce-notices-wrapper').length
+                 || $link.hasClass('added_to_cart') || $link.hasClass('wac-open-side-cart') ) {
+                return;
+            }
+            if ( cartPath($link.attr('href')) !== cartUrl ) {
+                return;
+            }
+            e.preventDefault();
+            open();
+        });
+    }
+
+    // The floating button out of sight while the cart is empty (when set): its count is a cart fragment.
+    var toggleEmpty = function() {
+        var count = parseInt($('.wac-side-cart-count').first().text(), 10) || 0;
+        $toggle.toggleClass('wac-is-empty', count === 0);
+    };
+    $(document.body).on('wc_fragments_refreshed wc_fragments_loaded added_to_cart removed_from_cart', toggleEmpty);
 
     // added_to_cart: WooCommerce's AJAX buttons; wac_added_to_cart: the PRO's AJAX "Add to cart".
     var lastJQueryAdd = 0;

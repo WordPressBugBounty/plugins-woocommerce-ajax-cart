@@ -11,6 +11,7 @@
 jQuery(function($){
     var wacUpdateTimeout = null;
     var wacGridPollPending = false;
+    var wacGridPolls = 0;
 
     window.wacChange = function(qtyInput) {
         // ask user if they really want to remove this product
@@ -44,6 +45,15 @@ jQuery(function($){
 
         // deal with update cart button
         var updateButton = mainSelector.find("button[name='update_cart']:not(.dgfw-add-gift-button),input[name='update_cart']:not(.dgfw-add-gift-button)");
+
+        // A theme that removed the "Update cart" button: post the cart form as that button would
+        // (a page reload). Nothing to click means nothing would ever give the checkout button back.
+        if ( !updateButton.length ) {
+            if ( cartForm.length ) {
+                cartForm.append( $('<input type="hidden" name="update_cart">').val('1') ).trigger('submit');
+            }
+            return;
+        }
 
         updateButton.removeAttr('disabled')
                     .trigger('click')
@@ -83,8 +93,9 @@ jQuery(function($){
         $(document).on('change', '.qty', function(e){
             var qtyInput = $(this);
 
-            // prevent troubles with WooCommerce Product Bundles plugin
-            if ( $('.bundle_add_to_cart_button').length ) {
+            // prevent troubles with WooCommerce Product Bundles plugin: its own form's quantities
+            // (before, any bundle button on the page switched the cart's auto-update off)
+            if ( qtyInput.closest('.bundle_form, .bundle_data, .bundled_product').length ) {
                 return true;
             }
 
@@ -115,8 +126,24 @@ jQuery(function($){
         return inputQty;
     };
 
-    // The -/+ buttons. A field with no max (or no min) is never capped: parseFloat() of a missing
-    // attribute is NaN, and any comparison with NaN is false.
+    // The field's step (its `step` attribute; 1 when it has none or says "any").
+    window.wacQtyStep = function(inputQty) {
+        var step = parseFloat(inputQty.attr('step'));
+
+        return ( step > 0 ) ? step : 1;
+    };
+
+    // A quantity moved by one step, kept to the step's decimals (0.1 + 0.2 is 0.30000000000000004).
+    var wacStepQty = function(value, step, direction) {
+        var decimals = ( String(step).split('.')[1] || '' ).length;
+        var next = ( parseFloat(value) || 0 ) + direction * step;
+
+        return parseFloat( next.toFixed(decimals) );
+    };
+
+    // The -/+ buttons move the quantity by the field's step, between its min and max. A field with no
+    // max (or no min) is never capped: parseFloat() of a missing attribute is NaN, and any comparison
+    // with NaN is false.
     var wacIncrement = function(e){
         if ( $(this).hasClass('disabled') ) {
             e.preventDefault();
@@ -124,12 +151,14 @@ jQuery(function($){
         }
 
         var inputQty = wacFindInputQty( $(this) );
+        var next = wacStepQty(inputQty.val(), window.wacQtyStep(inputQty), 1);
+        var max = parseFloat(inputQty.attr('max'));
 
-        if ( parseFloat(inputQty.val()) >= parseFloat(inputQty.attr('max')) ) {
+        if ( next > max ) {
             return false;
         }
 
-        inputQty.val( function(i, oldval) { return ++oldval; });
+        inputQty.val(next);
         inputQty.trigger('change');
 
         return false;
@@ -142,16 +171,28 @@ jQuery(function($){
         }
 
         var inputQty = wacFindInputQty( $(this) );
-        var oldVal = inputQty.val();
+        var next = wacStepQty(inputQty.val(), window.wacQtyStep(inputQty), -1);
+        var min = parseFloat(inputQty.attr('min'));
 
-        if ( parseInt(inputQty.attr('min')) >= oldVal ) {
+        if ( next < min || next < 0 ) {
             return false;
         }
 
-        inputQty.val( --oldVal );
+        inputQty.val(next);
         inputQty.trigger('change');
 
         return false;
+    };
+
+    // A theme that adds its own -/+ buttons by script (after the page is drawn) keeps them; ours go.
+    var wacDropDuplicateButtons = function() {
+        $('.wac-quantity').each(function(){
+            var wrap = $(this);
+
+            if ( wrap.find('.plus, .minus').not('.wac-qty-button').length ) {
+                wrap.find('.wac-qty-button').remove();
+            }
+        });
     };
 
     // Bound on the buttons themselves (a theme that stops the click on its way up still gets them) and
@@ -167,16 +208,20 @@ jQuery(function($){
             $('.wac-btn-inc').off('click.wac2910').on('click.wac2910', wacIncrement);
             $('.wac-btn-sub').off('click.wac2911').on('click.wac2911', wacDecrement);
 
-            // Grid themes draw their products after load: bind the new buttons every half second.
-            // One timer at a time — before, every cart fragments refresh started one more.
-            if ( $('.grid').length && !wacGridPollPending ) {
+            // Grid themes draw their products after load: bind the new buttons every half second, for
+            // ten seconds after the page or a cart refresh. One timer at a time — before, every cart
+            // fragments refresh started one more, and it never stopped.
+            if ( $('.grid').length && !wacGridPollPending && wacGridPolls < 20 ) {
                 wacGridPollPending = true;
+                wacGridPolls++;
                 setTimeout(function(){
                     wacGridPollPending = false;
                     window.wacListenQtyButtons();
                 }, 500);
             }
         }
+
+        wacDropDuplicateButtons();
 
         $(document).off('click.wac3000').on('click.wac3000', '.wac-btn-inc', wacIncrement);
         $(document).off('click.wac3001').on('click.wac3001', '.wac-btn-sub', wacDecrement);
@@ -186,7 +231,8 @@ jQuery(function($){
     wacListenQtyChange();
     window.wacListenQtyButtons();
 
-    $(document.body).on('wc_fragments_refreshed', function(){
+    $(document.body).on('wc_fragments_refreshed updated_wc_div', function(){
+        wacGridPolls = 0;
         window.wacListenQtyButtons();
     });
 

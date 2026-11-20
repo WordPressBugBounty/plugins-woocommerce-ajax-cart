@@ -80,3 +80,4 @@ body.wac-side-cart-locked { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
     .wac-side-cart, .wac-side-cart.wac-mode-popup { transition: none; }
 }
+.wac-side-cart-toggle.wac-hide-empty.wac-is-empty { display: none; }

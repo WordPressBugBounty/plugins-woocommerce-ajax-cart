@@ -1,24 +1,27 @@
-=== Ajax Cart for WooCommerce ===
+=== Ajax Cart for WooCommerce – Side Cart, Free Shipping Bar & Quantity Buttons ===
 Contributors: moiseh
-Tags: woocommerce, ajax, cart, side cart, quantity
+Tags: side cart, free shipping bar, cart drawer, quantity buttons, ajax cart
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 1.5.5
+Requires PHP: 7.2
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AJAX cart for WooCommerce: totals update as soon as a quantity changes, plus a side cart with a coupon form and a free shipping bar.
+A side cart that slides in when a product is added, a free shipping bar, and -/+ quantity buttons that update the cart totals with AJAX.
 
 == Description ==
 
 Ajax Cart for WooCommerce makes buying smoother in two ways:
 
+* **A side cart**: a cart drawer that slides in from the side — or a popup — the moment a product is added, with a floating cart button, a coupon form and a free shipping progress bar. It works on classic and block themes alike, on every page but the cart and checkout, and the theme's own header cart can open it too.
 * **On the classic cart page** (the `[woocommerce_cart]` shortcode most stores and classic themes use), totals are recalculated with AJAX as soon as a quantity changes — no "Update cart" click — with -/+ buttons around the quantity.
-* **A side cart** (optional): a cart drawer that slides in from the side — or a popup — when a product is added, with a floating cart button, a coupon form and a free shipping progress bar — on classic and block themes alike, on every page but the cart and checkout.
 
-On the newer **Cart block** (the default for stores created since WooCommerce 8.3), WooCommerce already updates quantities by itself; there the plugin adds a confirmation before an item is removed, and the side cart works the same.
+On the newer **Cart block** (the default for stores created since WooCommerce 8.3), WooCommerce already updates quantities by itself; there the plugin adds a confirmation before an item is removed, the free shipping bar, and the side cart works the same.
 
-No other hacks, code or theme changes are needed: the features are active as soon as the plugin is.
+No code or theme changes are needed: a new install starts with the side cart and the free shipping bar on, and everything else is a switch in WooCommerce > Ajax Cart for WooCommerce.
+
+**Need more?** The PRO adds a rewards progress bar, product suggestions and -/+ quantities inside the side cart, AJAX Add to cart and quantities kept in sync on the shop and product pages — **$35 one-time** (no subscription), with 1 year of updates and support and a 7-day money-back guarantee. See the PRO features below.
 
 You can try and play with this plugin demonstration [clicking here](https://tastewp.com/new?pre-installed-plugin-slug=woocommerce%2Cwoocommerce-ajax-cart&redirect=plugins.php&ni=true)
 
@@ -26,47 +29,68 @@ You can try and play with this plugin demonstration [clicking here](https://tast
 
 Free version features:
 
-* Automatically reload and recalculate the classic Cart using AJAX when quantity changes
-* Show -/+ buttons around item quantity on cart page
-* Show item quantity as select instead numeric field
-* Show user confirmation when change item quantity to zero — and, on the Cart block, before an item is removed
-* Side cart: a cart drawer that slides in when a product is added — or a popup in the middle of the screen — with a floating cart button and item count
+* Side cart: a cart drawer that slides in when a product is added — or a popup in the middle of the screen — with a floating cart button and item count; the theme's header cart icon opens it too
 * Coupon form inside the side cart: apply or remove a coupon without leaving the page, the totals and WooCommerce's messages right there
 * Your own look for the side cart: accent colour, the floating button's icon and corner, and its texts (title, checkout button, empty cart)
 * Free shipping progress bar ("Spend $12.00 more for free shipping") in the side cart, Mini-Cart, classic Cart and Cart block — the amount read from your free shipping method, or your own
+* Automatically reload and recalculate the classic Cart using AJAX when quantity changes
+* Show -/+ buttons around item quantity on cart page — stepping by the quantity's own step, and left out when your theme draws its own
+* Show item quantity as select (a dropdown) instead of a number field
+* Ask the shopper to confirm when an item quantity is set to zero — and, on the Cart block, before an item is removed
 
 Premium version features:
 
-* Allow to change/synchronize quantities in shop, minicart and single product pages [view demo](https://youtu.be/8p_Zu8_rcO8)
-* Make the `Add to cart` button to perform with AJAX, without full page reload [view demo](https://youtu.be/-Ko6BZUoDhQ)
-* Faster AJAX reload call when change quantities in Cart page
-* Option to lock quantity inputs to allow only change using plus and minus buttons
-* Update price vs quantity calculation automatically on Single Product pages ([view demo](https://youtu.be/9ukJhstrIHc))
-* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/nl5G8h2ppiA))
-* Undo a removed item on the Cart block ([view demo](https://youtu.be/8iwx75FxTo0))
-* Minimum, maximum and step for every product quantity, on the classic and the block cart
 * Rewards progress bar: your milestones on the way to bigger orders ("$50: free gift", "$100: 10% off") in the side cart, Mini-Cart, classic Cart and Cart block — it shows the progress, the rewards are your own coupons or rules ([view demo](https://youtu.be/VZEhx2PCi1Y))
 * Product suggestions in the side cart: the cart items' cross-sells (or upsells), each with an AJAX "Add" button ([view demo](https://youtu.be/NgZjkvj98rg))
+* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/nl5G8h2ppiA))
+* AJAX Add to cart on product pages: the product goes in without a page reload ([view demo](https://youtu.be/-Ko6BZUoDhQ))
+* Quantity -/+ buttons on the Shop, Mini-Cart and product pages, kept in sync with the cart ([view demo](https://youtu.be/8p_Zu8_rcO8))
+* Live price on product pages: the price follows the quantity chosen (quantity × unit price) ([view demo](https://youtu.be/9ukJhstrIHc))
+* Undo a removed item on the Cart block ([view demo](https://youtu.be/8iwx75FxTo0))
+* Minimum, maximum and step for every product quantity, on the classic and the block cart — checked again when the cart is updated
+* Faster AJAX update of the classic Cart page
+* Lock the quantity fields so they change only with the -/+ buttons
 
-Get the PRO version [here](https://gum.co/wajaxcart).
+Get the PRO version [here](https://moiseh.gumroad.com/l/wajaxcart?utm_source=wporg&utm_medium=plugin&utm_campaign=woocommerce-ajax-cart&utm_content=readme).
 
 [youtube https://www.youtube.com/watch?v=fAP6Jphtrdw]
 
-If you looking for a related plugin with more complete features maybe you can try [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability) plugin.
+Looking for more checkout and product page tools — a "Buy now" button, a shorter checkout, quantities on the checkout? Try our [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability/) plugin.
 
 == Installation ==
 
-1. Upload `woocommerce-ajax-cart.zip` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Done. This plugin no requires extra configurations to work
+1. In your WordPress admin go to Plugins > Add New, search for "Ajax Cart for WooCommerce" and click Install, then Activate (or upload `woocommerce-ajax-cart.zip` there)
+2. That's it: a new install starts with the side cart and the free shipping bar on
+3. To change anything — the side cart's look, the -/+ buttons, the free shipping amount — open WooCommerce > Ajax Cart for WooCommerce
 
 == Frequently Asked Questions ==
+
+= Does it work with the Cart block? =
+
+Yes. On WooCommerce's Cart block (the default cart of stores created since WooCommerce 8.3) the block already updates the totals by itself; the plugin adds a confirmation before an item is removed and the free shipping bar there, and the side cart works on every page with either cart. The -/+ buttons and AJAX totals are for the classic cart page (the `[woocommerce_cart]` shortcode).
+
+= My theme already has -/+ buttons. Will I get two pairs? =
+
+No. When the theme's quantity field already has its own plus and minus buttons, the plugin leaves its own out and keeps updating the cart when the theme's buttons change the quantity. You can also turn the plugin's buttons off in WooCommerce > Ajax Cart for WooCommerce > General.
+
+= How do I open the side cart from my header cart icon? =
+
+It opens by itself: with the side cart on, a click on any link to the cart page — the theme's header cart, its icon or count — opens the side cart instead (turn that off in Settings > Side cart). For your own button or menu item, give it the CSS class `wac-open-side-cart`.
+
+= Where is the free shipping amount taken from? =
+
+From the "Free shipping" method of the shopper's shipping zone (its minimum order amount), or from the amount you type in Settings > Free shipping bar. With no amount the bar stays hidden.
+
+= Can I hide the floating cart button? =
+
+Yes: turn "Show a floating cart button" off, or have it hidden only while the cart is empty, in Settings > Side cart.
 
 = Can a developer change what the plugin does? =
 
 Yes, with WordPress hooks (filters and actions) and JavaScript events, in a child theme's functions.php or a small plugin:
 
 * `wac_side_cart_enabled` (filter, bool `$enabled`): the side cart and its floating button on or off on the current page.
+* `wac_load_assets` (filter, bool `$load`): whether the plugin's cart script and styles load on the current page (by default the Cart page, a page with the classic cart, and pages with the side cart).
 * `wac_side_cart_before_items` / `wac_side_cart_after_items` (actions): print your own HTML in the side cart, above or below its items.
 * `wac_free_shipping_threshold` (filter, float `$threshold`): the order amount that gives free shipping, as the bars show it — for example converted to the shopper's currency; 0 hides the bar.
 * `wac_progress_bar_html` (filter, string `$html`): the free shipping bar printed in the side cart, Mini-Cart and classic Cart.
@@ -87,6 +111,20 @@ Yes, with WordPress hooks (filters and actions) and JavaScript events, in a chil
 5. The side cart settings: drawer or popup, coupon form, accent colour, the floating button's icon and corner, and the texts.
 
 == Changelog ==
+
+= 1.6.0 =
+* New: the theme's own header cart (any link to the cart page) opens the side cart instead of leaving the page — on by default, Settings > Side cart (2026-11-20)
+* New: the floating cart button can stay hidden while the cart is empty (Settings > Side cart) (2026-11-20)
+* Changed: a new install starts with the side cart and the free shipping bar on, and a one-time "Get started" notice points to the side cart settings; an update keeps your settings as they are (2026-11-20)
+* Changed: the settings page shows the PRO's settings beside the free ones they extend, locked, each with its demo video; the PRO notice moved from the Plugins screen to the plugin's own settings page, where it can be hidden for 90 days; the Get PRO tab says the price and what comes with it (2026-11-20)
+* Changed: after two weeks the settings page asks, once, for a review on WordPress.org ("Maybe later" puts it off a month) (2026-11-20)
+* Fixed: on themes that draw their own -/+ buttons (Woodmart, Flatsome, Astra…) the cart page no longer gets a second pair, and the quantity field's own markup is kept whole — every `</div>` in it was removed before (2026-11-20)
+* Fixed: the -/+ buttons move the quantity by the field's step and stop at its minimum and maximum (they always moved by 1) (2026-11-20)
+* Fixed: on a theme without an "Update cart" button, a changed quantity no longer leaves the checkout button stuck on "Updating..." — the cart is updated by a page reload instead (2026-11-20)
+* Fixed: a Product Bundles button anywhere on the page no longer turns off the cart's automatic update; only the bundle's own quantities are left alone (2026-11-20)
+* Fixed: on grid themes, the -/+ buttons are bound again for ten seconds after the page or a cart refresh, not every half second for as long as the page is open (2026-11-20)
+* Hardened: the cart script and styles load only where they are used — the Cart page, a page with the classic cart or with the side cart — not on every page of the site (filter `wac_load_assets`); the admin notices are set up only in the admin (2026-11-20)
+* Readme: the plugin's name says what it does (Side Cart, Free Shipping Bar & Quantity Buttons), new tags, the PRO's price, and answers to the common questions (Cart block, a theme's own -/+ buttons, opening the side cart from the header cart) (2026-11-20)
 
 = 1.5.5 =
 * Tested with WooCommerce 11.3 and WordPress 7.1

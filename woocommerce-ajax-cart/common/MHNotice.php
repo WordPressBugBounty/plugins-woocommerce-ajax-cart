@@ -122,12 +122,12 @@ if ( !class_exists('WAC_MHNotice') ) {
         public function removeNotice($alias) {
             $notices = $this->readNotices();
             
+            // Nothing to do (and no query) when the notice is not there.
             if ( !empty($notices[$alias]) ) {
                 unset($notices[$alias]);
                 $this->storeNotices($notices);
+                delete_transient($this->transactionAlias($alias));
             }
-
-            delete_transient($this->transactionAlias($alias));
         }
 
         public function addTempNotice($type, $message) {

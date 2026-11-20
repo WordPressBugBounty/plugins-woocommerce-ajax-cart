@@ -111,7 +111,12 @@ function wac_side_cart_render() {
     $position = ( wac_option('side_cart_position') == 'left' ) ? 'left' : 'right';
 
     if ( wac_option('side_cart_button') == 'yes' ) {
-        echo '<button type="button" class="wac-side-cart-toggle wac-pos-' . esc_attr($position) . '" aria-controls="wac-side-cart" aria-expanded="false" aria-label="' . esc_attr__( 'Open the cart', 'woocommerce-ajax-cart' ) . '">';
+        // Hidden while the cart is empty when set (wac-side-cart.js keeps wac-is-empty in step with the count).
+        $toggleClasses = 'wac-side-cart-toggle wac-pos-' . $position;
+        if ( wac_option('side_cart_button_hide_empty') == 'yes' ) {
+            $toggleClasses .= ' wac-hide-empty' . ( wac_side_cart_count() === 0 ? ' wac-is-empty' : '' );
+        }
+        echo '<button type="button" class="' . esc_attr($toggleClasses) . '" aria-controls="wac-side-cart" aria-expanded="false" aria-label="' . esc_attr__( 'Open the cart', 'woocommerce-ajax-cart' ) . '">';
         echo wp_kses( wac_side_cart_icon_svg(), wac_side_cart_allowed_html() );
         echo '<span class="wac-side-cart-count">' . esc_html( wac_side_cart_count() ) . '</span>';
         echo '</button>';
@@ -217,6 +222,8 @@ function wac_side_cart_enqueue() {
     wp_enqueue_script('wac-side-cart', plugins_url('assets/wac-side-cart.js', $base), array('jquery'), (string) filemtime($dir . 'assets/wac-side-cart.js'), true);
     wp_localize_script('wac-side-cart', 'wac_side_cart', array(
         'open_on_add' => wac_option('side_cart_open_on_add'),
+        'open_from_cart_links' => wac_option('side_cart_open_from_cart_links'),
+        'cart_url' => wc_get_cart_url(),
         'checkout_text' => trim( (string) wac_option('side_cart_checkout_text') ),
         'empty_text' => trim( (string) wac_option('side_cart_empty_text') ),
         'wc_ajax_url' => class_exists('WC_AJAX') ? WC_AJAX::get_endpoint('%%endpoint%%') : '',
