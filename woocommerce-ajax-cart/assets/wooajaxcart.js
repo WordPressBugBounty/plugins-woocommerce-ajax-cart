@@ -55,7 +55,7 @@ jQuery(function($){
             return;
         }
 
-        updateButton.removeAttr('disabled')
+        updateButton.prop('disabled', false)
                     .trigger('click')
                     .val( wooajaxcart.updating_text )
                     .prop('disabled', true);

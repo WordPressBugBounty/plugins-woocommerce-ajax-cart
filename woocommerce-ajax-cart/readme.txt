@@ -2,9 +2,9 @@
 Contributors: moiseh
 Tags: side cart, free shipping bar, cart drawer, quantity buttons, ajax cart
 Requires at least: 5.0
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.2
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,7 +25,7 @@ No code or theme changes are needed: a new install starts with the side cart and
 
 You can try and play with this plugin demonstration [clicking here](https://tastewp.com/new?pre-installed-plugin-slug=woocommerce%2Cwoocommerce-ajax-cart&redirect=plugins.php&ni=true)
 
-[youtube https://www.youtube.com/watch?v=zDqIakWksak]
+[youtube https://www.youtube.com/watch?v=LG6WiceTuwU]
 
 Free version features:
 
@@ -42,7 +42,7 @@ Premium version features:
 
 * Rewards progress bar: your milestones on the way to bigger orders ("$50: free gift", "$100: 10% off") in the side cart, Mini-Cart, classic Cart and Cart block — it shows the progress, the rewards are your own coupons or rules ([view demo](https://youtu.be/VZEhx2PCi1Y))
 * Product suggestions in the side cart: the cart items' cross-sells (or upsells), each with an AJAX "Add" button ([view demo](https://youtu.be/NgZjkvj98rg))
-* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/nl5G8h2ppiA))
+* Change quantities with -/+ buttons inside the side cart ([view demo](https://youtu.be/SnqIrGla8XE))
 * AJAX Add to cart on product pages: the product goes in without a page reload ([view demo](https://youtu.be/-Ko6BZUoDhQ))
 * Quantity -/+ buttons on the Shop, Mini-Cart and product pages, kept in sync with the cart ([view demo](https://youtu.be/8p_Zu8_rcO8))
 * Live price on product pages: the price follows the quantity chosen (quantity × unit price) ([view demo](https://youtu.be/9ukJhstrIHc))
@@ -53,7 +53,7 @@ Premium version features:
 
 Get the PRO version [here](https://moiseh.gumroad.com/l/wajaxcart?utm_source=wporg&utm_medium=plugin&utm_campaign=woocommerce-ajax-cart&utm_content=readme).
 
-[youtube https://www.youtube.com/watch?v=fAP6Jphtrdw]
+[youtube https://www.youtube.com/watch?v=s3rPvse4IHs]
 
 Looking for more checkout and product page tools — a "Buy now" button, a shorter checkout, quantities on the checkout? Try our [Better Usability for WooCommerce](https://wordpress.org/plugins/woo-better-usability/) plugin.
 
@@ -106,11 +106,15 @@ Yes, with WordPress hooks (filters and actions) and JavaScript events, in a chil
 
 1. The classic cart page: a click on "+" or "-" updates the totals with AJAX, without clicking "Update cart" — with the free shipping progress bar.
 2. The side cart opens when a product is added: a coupon form, the discount and the total after it, and the free shipping progress bar.
-3. The side cart as a popup, in your accent colour, with the floating cart button and its item count.
+3. The side cart as a popup, in your accent colour, with the floating cart button and its item count — opened here from the theme's own header cart.
 4. The free shipping progress bar on WooCommerce's Cart block.
 5. The side cart settings: drawer or popup, coupon form, accent colour, the floating button's icon and corner, and the texts.
 
 == Changelog ==
+
+= 1.6.1 =
+* Hardened: the cart's update button is switched back on with `.prop()` instead of `.removeAttr()` — no jQuery Migrate warning on WordPress 7.2
+* Tested with WordPress 7.2
 
 = 1.6.0 =
 * New: the theme's own header cart (any link to the cart page) opens the side cart instead of leaving the page — on by default, Settings > Side cart (2026-11-20)

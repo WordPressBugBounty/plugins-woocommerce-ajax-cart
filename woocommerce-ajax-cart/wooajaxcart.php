@@ -3,7 +3,7 @@
 Plugin Name: Ajax Cart for WooCommerce – Side Cart, Free Shipping Bar & Quantity Buttons
 Plugin URI: https://mhtec.org/plugins/woocommerce-ajax-cart?utm_source=wp-admin&utm_medium=plugin&utm_content=plugin-uri
 Description: A side cart that slides in when a product is added, a free shipping bar, and a classic cart that updates with AJAX as soon as a quantity changes — no "Update cart" click needed
-Version: 1.6.0
+Version: 1.6.1
 Author: Moises Heberle
 Author URI: https://mhtec.org/contact/
 Text Domain: woocommerce-ajax-cart
